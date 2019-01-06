@@ -321,7 +321,7 @@ func Start() {
   		ContentTypeNosniff:    "nosniff",
   		XFrameOptions:         "DENY",
   		HSTSMaxAge:            31536000,
-  		ContentSecurityPolicy: "default-src 'self'; img-src * data:",
+  		ContentSecurityPolicy: "default-src 'self' 'unsafe-inline'; img-src * data:",
   	}))
 		e.Listener = https.Listener()
 		go http.ListenAndServe(":80", https.HTTPHandler(nil))
