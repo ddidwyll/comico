@@ -1,0 +1,159 @@
+<form
+  action="/api/users"
+  method="{$method}"
+  onsubmit="return false"
+>
+  {#if !!$curItem}
+    <div>
+      <figure>
+        <input
+          type="text"
+          on:input="$setDeep('scribes',this.value)"
+          value="{$form.scribes?$form.scribes.join(', '):''}"
+          placeholder="Subscribes"
+          aria-label="Subscribes"
+        >
+        <hr>
+        <input
+          type="text"
+          on:input="$setDeep('ignores',this.value)"
+          value="{$form.ignores?$form.ignores.join(', '):''}"
+          placeholder="Ignore list"
+          aria-label="Ignore list"
+        >
+      </figure>
+      <img
+        src="{$_images.users[$curItem.id]||$empty}"
+        on:error="$repairImage(this)"
+        on:click="this.nextElementSibling.click()"
+        alt="Change avatar"
+        title="Change avatar"
+      >
+      <input
+        type="file"
+        name="image"
+        accept="image/*"
+        on:input="$uploadImage(event)"
+        hidden
+      >
+    </div>
+    <hr>
+  {/if}
+  <div>
+    <input
+      type="text"
+      value="{$form.id}"
+      on:input="$setForm(this.value,'id')"
+      placeholder="Login"
+      aria-label="Login"
+      maxLength="15"
+      name="id"
+      readonly="{!!$curItem}"
+    >
+    <input
+      type="text"
+      value="{$form.title||''}"
+      on:input="$setForm(this.value,'title')"
+      placeholder="Real name"
+      aria-label="Real name"
+      maxLength="25"
+      name="title"
+    >
+    <input
+      type="text"
+      value="{$form.type||''}"
+      on:input="$setForm(this.value,'type')"
+      placeholder="Type"
+      aria-label="Type"
+      maxLength="25"
+      name="type"
+    >
+  </div>
+  <hr>
+  <Table />
+  <hr>
+  {#if !!$curItem}
+    <div>
+      <input
+        type="password"
+        bind:value="pass"
+        placeholder="New password"
+        aria-label="New password"
+        maxLength="15"
+        name="pass"
+        autocomplete="false"
+      >
+      <input
+        type="password"
+        bind:value="passAgain"
+        placeholder="Type again"
+        aria-label="Type again"
+        maxLength="15"
+        autocomplete="false"
+      >
+    </div>
+    <hr>
+  {/if}
+  <div>
+    <input
+      type="button"
+      class="red"
+      on:click="$DELETE($hashType,$curItem.id)"
+      hidden="{!$curItem}"
+      value="Delete"
+    >
+    <input
+      type="submit"
+      disabled="{!!formErrs}"
+      on:click="submit()"
+      value="{$message||formErrs||'Submit'}"
+      class:red="!!$message"
+    >
+    <input
+      type="button"
+      on:click="$closeModal()"
+      value="Cancel"
+    >
+  </div>
+</form>
+
+<script>
+export default {
+  immutable: true,
+  components: {
+    Table: './tableForm.html'
+  },
+  data() {
+    return {
+      pass: '',
+      passAgain: ''
+    }
+  },
+  computed: {
+    formErrs: ({ $form, pass, passAgain }) => {
+      const id = !$form.id ? 'Username is required' : ''
+      const length = !!pass && pass.length < 4 ? 'Min password length is 4 ' : ''
+      const equal = pass === passAgain ? '' : 'Passwords not equal'
+      return id || length || equal
+    }
+  },
+  methods: {
+    submit() {
+      const { formErrs, pass } = this.get(), { form } = this.store.get()
+      this.store.PUST({ form, formErrs })
+      if (!!pass) this.store.PUST({ form: { id: form.id, pass }, formErrs }, 'pass')
+    }
+  },
+  oncreate() {
+    const { curItem, _usersEdit, _usersAdd, _id } = this.store.get(); let form = {}
+    if (!!curItem) form = !!_usersEdit && curItem.id === _usersEdit.id ? _usersEdit : curItem
+    else form = !!_usersAdd && (!!_usersAdd.id || !!_usersAdd.title) ? _usersAdd :
+      { id: '', title: '', text: '', Table: {}}
+    if (!form.arr) {
+      const Table = form.Table || {}; form.arr = []
+      Object.entries(Table).forEach(arr => form.arr.push({ key: arr[0], value: arr[1] }))
+    }
+    this.store.set({ form })
+  }
+}
+</script>

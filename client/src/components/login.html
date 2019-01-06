@@ -1,0 +1,105 @@
+<form
+  on:keydown="submit(event)" class="login"
+  action="/pub/{$isSignIn?'login':'pass'}"
+  method="POST" onsubmit="return false"
+>
+  <figure>
+    <button
+      on:click="$set({_modal:'signin'})"
+      class:active="$isSignIn">Sign In</button>
+    <button
+      on:click="$set({_modal:'signup'})"
+      class:active="$isSignUp"
+      hidden="{$isSigned}">Sign Up</button>
+    <button
+      on:click="$set({_id:'',_token:'',_expire:'',_modal:''})"
+      hidden="{!$isSigned}">Sign Out</button>
+  </figure>
+  <input
+    type="text"
+    value="{id}"
+    on:input="set({id:normalize(this.value)})"
+    placeholder="Username"
+    aria-label="Username"
+    maxLength="15" name="id"
+    autofocus
+  >
+  <hr>
+  <input
+    type="password"
+    bind:value="pass"
+    placeholder="Password"
+    aria-label="Password"
+    maxLength="15"
+    name="pass"
+  >
+  <hr hidden="{!$isSignUp}">
+  <input
+    type="password"
+    bind:value="passAgain"
+    placeholder="Type again"
+    aria-label="Type again"
+    maxLength="15"
+    hidden="{!$isSignUp}"
+  >
+  <hr>
+  <p ref:message>{formErrs}</p>
+  <input
+    type="submit"
+    disabled="{!!formErrs}"
+    on:click="submit()"
+    value="Submit"
+  >
+</form>
+
+<script>
+export default {
+  immutable: true,
+  data() {
+    return {
+      id: '',
+      pass: '',
+      passAgain: ''
+    }
+  },
+  computed: {
+    formErrs: ({ id, pass, passAgain, $isSignUp }) => {
+      if (!id || !pass) return '\n'
+      const length = id.length < 4 || pass.length < 4 ? 'Min length is 4 ' : ''
+      const equal = !$isSignUp || pass === passAgain ? '' : 'Passwords not equal'
+      return length || equal
+    }
+  },
+  helpers: {
+    normalize(nick) {
+      return nick.replace(' ', '_').replace('@', '_').replace('.', '_').replace('#', '_').replace('/', '_')
+        .replace('?', '_').replace(':', '_').replace('&', '_').replace('$', '_').replace('\'', '_')
+        .replace('"', '_').replace('\\', '_'). replace('*', '_').replace(';', '_').replace('{', '_')
+        .replace('}', '_').replace('(', '_'). replace(')', '_').replace('[', '_').replace(']', '_')
+    }
+  },
+  methods: {
+    submit(event = { keyCode: 13 }) {
+      const { id, pass, formErrs } = this.get(), store = this.store, { isSignIn } = store.get()
+      if (!!formErrs || event.keyCode !== 13) return
+      this.store.take()
+      const dest = isSignIn ? 'login' : 'pass', message = this.refs.message
+      let ok = false
+      fetch(location.origin + '/pub/' + dest, {
+        method: 'POST',
+        body: JSON.stringify({ id, pass }),
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
+      }).then(r => { ok = r.ok; return r.json()
+      }).then(r => {
+        message.textContent = r.message
+        if (!ok) return
+        this.set({ pass: '', passAgain: '' })
+        if (isSignIn) store.set({ _id: id, _token: r.token, _expire: r.expire, _modal: '' })
+        if (!isSignIn) store.set({ _modal: 'signin' }) || store.checkUpdate('users')
+      }).catch((e) => message.textContent = e.message || e)
+      setTimeout(() => { message.textContent = '' }, 5000)
+      this.store.release()
+    }
+  }
+}
+</script>

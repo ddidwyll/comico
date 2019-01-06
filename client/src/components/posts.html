@@ -1,0 +1,32 @@
+{#each (!!$curItem ? [$curItem] : $pagedItems) as post, index (post.id)}
+  <article
+    on:click="$goto($isAlone?{}:{id:post.id,search:null,page:null})"
+    on:keydown="$goto({id:post.id,search:null,page:null,event})"
+    tabindex="{$isAlone?-1:index+5}"
+  >
+    <h1 hidden="{$isAlone}">
+      {post.title}
+      {#if !!$comments.posts[post.id]}
+        <b>
+          {$comments.posts[post.id].length} / {$comments.activity.posts[post.id] ? $comments.activity.posts[post.id].length : 0}
+        </b>
+      {/if}
+    </h1>
+    <h2 on:dblclick="$goto({id:null,search:post.type})">{post.type}</h2>
+    <strong>{date(post.id)}</strong>
+    <a href="#users?id={post.auth}">@{post.auth}</a>
+    <hr>
+    {#if $isAlone}
+      {#each post.text.split('\n') as t}<p>{t}</p>{/each}
+    {/if}
+    <a href="#posts?id={post.id}" hidden>{post.title}</a>
+  </article>
+{/each}
+<script>
+export default {
+  immutable: true,
+  helpers: {
+    date: (unix) => store.dateFormat(unix)
+  },
+}
+</script>

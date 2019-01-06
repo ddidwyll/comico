@@ -1,0 +1,21 @@
+<figure hidden="{!$maxPages}">
+  <button
+    on:click="$gotoCmntsPage(($hashPage-1)||null)"
+    disabled="{!+$hashPage}"
+    title="Prev"
+  >⬅</button>
+  {#each (new Array($maxPages+1)) as _, index}
+    <button
+      on:click="$gotoCmntsPage(index||null)"
+      class:active="+$hashPage===index||(!index&&!$hashPage)"
+    >{index}</button>
+  {/each}
+  <button
+    on:click="$gotoCmntsPage(+$hashPage+1||1)"
+    disabled="{+$hashPage===$maxPages||!$maxPages}"
+    title="Next"
+  >➡</button>
+</figure>
+<script>
+export default { immutable: true }
+</script>

@@ -1,0 +1,9 @@
+client/node_modules
+client/public/bundle.*
+client/package-lock.json
+client/public/img/goods_*
+client/public/img/users_*
+*.db
+comico
+.cache
+config.json

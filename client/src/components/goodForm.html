@@ -1,0 +1,127 @@
+<form
+  action="/api/goods"
+  method="{$method}"
+  onsubmit="return false"
+>
+  <input value="{$form.id}" name="id" hidden>
+  <input value="{$form.auth}" name="auth" hidden>
+  {#if !!$curItem}
+    <div>
+      <textarea
+        placeholder="Image URLs, one per line"
+        aria-label="Image URLs, one per line"
+        value="{$form.images?$form.images.join('\n'):''}"
+        on:input="$setDeep('images',this.value,'\n',120)"
+      ></textarea>
+      <img
+        src="{$_images.goods[$curItem.id]||$empty}"
+        on:error="$repairImage(this)"
+        on:click="this.nextElementSibling.click()"
+        alt="Change main image"
+        title="Change main image"
+      >
+      <input
+        type="file"
+        name="image"
+        accept="image/*"
+        on:input="$uploadImage(event)"
+        hidden
+      >
+    </div>
+    <hr>
+  {/if}
+  <div>
+    <input
+      type="text"
+      on:input="$setForm(this.value,'type')"
+      value="{$form.type}"
+      placeholder="Type"
+      aria-label="Type"
+      maxLength="25"
+      name="type"
+    >
+    <input
+      type="text"
+      on:input="$setForm(this.value,'title')"
+      value="{$form.title}"
+      placeholder="Title"
+      aria-label="Title"
+      maxLength="35"
+      name="title"
+    >
+    <input
+      type="text"
+      on:input="$setForm(this.value,'price')"
+      value="{$form.price}"
+      placeholder="Price"
+      aria-label="Price"
+      maxLength="25"
+      name="price"
+    >
+  </div>
+  <hr>
+  <textarea
+    placeholder="Description"
+    aria-label="Description"
+    on:input="$setForm(this.value,'text')"
+    value="{$form.text}"
+    maxLength="1000"
+    name="text"
+    rows="4"
+  ></textarea>
+  <hr>
+  <Table />
+  <hr>
+  <div>
+    <input
+      type="button"
+      class="red"
+      on:click="$DELETE($hashType,$curItem.id)"
+      hidden="{!$curItem}"
+      value="Delete"
+    >
+    <input
+      type="submit"
+      disabled="{!!formErrs}"
+      on:click="$PUST({form:$form,formErrs})"
+      value="{$message||formErrs||'Submit'}"
+      class:red="!!$message"
+    >
+    <input
+      type="button"
+      on:click="$closeModal()"
+      value="Cancel"
+    >
+  </div>
+</form>
+
+<script>
+export default {
+  immutable: true,
+  components: {
+    Table: './tableForm.html'
+  },
+  computed: {
+    formErrs: ({ $form }) => {
+      if (!$form.title && !$form.type && !$form.price) return '\n'
+      const title = !$form.title ? 'Title required' : ''
+      const type = !$form.type ? 'Type required' : ''
+      const price = !$form.price ? 'Price required' : ''
+      const text = !$form.text ? 'Description required' : ''
+      return title || type || price || text
+    }
+  },
+  oncreate() {
+    const { curItem, _goodsEdit, _goodsAdd, _id } = this.store.get()
+    let form = {}
+    if (!!curItem) form = !!_goodsEdit && curItem.id === _goodsEdit.id ? _goodsEdit : curItem
+    else form = !!_goodsAdd && (!!_goodsAdd.title || !!_goodsAdd.text) ? _goodsAdd :
+      { id: '', title: '', type: '', price: '', text: '', Table: {} }
+    if (!form.arr) {
+      const Table = form.Table || {}; form.arr = []
+      Object.entries(Table).forEach(arr => form.arr.push({ key: arr[0], value: arr[1] }))
+    }
+    this.store.set({ form })
+  }
+}
+</script>

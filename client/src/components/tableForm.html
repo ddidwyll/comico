@@ -1,0 +1,63 @@
+{#each ($form.arr||[]) as row, index}
+  <div>
+    <input
+      type="text"
+      on:input="input(this.value,'key',index)"
+      value="{$form.arr[index].key}"
+      placeholder="Key"
+      aria-label="Key"
+      maxLength="25"
+    >
+    <input
+      type="text"
+      on:input="input(this.value,'value',index)"
+      value="{$form.arr[index].value}"
+      placeholder="Value"
+      aria-label="Value"
+      maxLength="120"
+    >
+    <input
+      type="button"
+      on:click="delRow(index)"
+      value="x"
+    >
+  </div>
+  <hr>
+{/each}
+<input
+  type="button"
+  on:click="addRow()"
+  hidden="{!$form.arr||$form.arr.length>9}"
+  value="Add row"
+>
+
+<script>
+export default {
+  immutable: true,
+  methods: {
+    addRow() {
+      const { form } = this.store.get()
+      form.arr.push({ key: '', value: '' })
+      this.store.setForm(form.arr, 'arr')
+    },
+    delRow(index) {
+      const { form } = this.store.get()
+      form.arr.splice(index, 1)
+      this.store.setForm(form.arr, 'arr')
+      this.arrToMap()
+    },
+    arrToMap() {
+      const Table = {}, { form } = this.store.get()
+      form.arr.forEach(row => {
+        if (!!row.key && !!row.value) Table[row.key.toLowerCase()] = row.value })
+      this.store.setForm(Table, 'Table')
+    },
+    input(value, keyOrVal, index) {
+      const { form } = this.store.get()
+      form.arr[index][keyOrVal] = value
+      this.store.setForm(form.arr, 'arr')
+      this.arrToMap()
+    }
+  }
+}
+</script>

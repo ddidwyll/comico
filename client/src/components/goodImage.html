@@ -1,0 +1,40 @@
+<strong>
+  { $curItem.title || '' }
+</strong>
+<img
+  class="loading"
+  src="{images[$index||0]}"
+  alt="{$curItem.title}"
+  on:click="$closeModal()"
+  on:error="$repairImage(this)"
+  on:load="$showImage(this)"
+>
+<figure>
+  {#each images as img, index}
+    <button
+      on:click="$set({index})"
+      class="loading"
+      class:disabled="index===$index"
+      tabindex="{index+5}"
+    >
+      <img src="{img}"
+        on:load="$showImage(this.parentNode)"
+        alt="{$curItem.title}"
+      >
+    </button>
+  {/each}
+</figure>
+<script>
+export default {
+  immutable: true,
+  computed: {
+    images: ({ $curItem }) => {
+      const images = [`/img/goods_${$curItem.id}.jpg`]
+      return images.concat(($curItem.images || []))
+    },
+    hack: ({ $index, images }) => {
+      if (images.length <= $index) store.set({ index: 0 })
+    }
+  }
+}
+</script>

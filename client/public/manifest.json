@@ -1,0 +1,15 @@
+{
+  "name": "=^.^= ComiCo",
+  "short_name": "=^.^=",
+  "icons": [
+    {
+      "src": "/walle.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff",
+  "theme_color": "#fff"
+}

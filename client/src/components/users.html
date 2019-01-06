@@ -1,0 +1,84 @@
+{#each (!!$curItem ? [$curItem] : $pagedItems) as user, index (user.id)}
+  <article
+    on:click="$goto($isAlone?{}:{id:user.id,search:null,page:null})"
+    on:keydown="$goto({id:user.id,search:null,page:null,event})"
+    tabindex="{$isAlone?-1:index+5}"
+  >
+    <h1 hidden="{$isAlone}">{user.title || user.id}</h1>
+    {#if $isAlone}
+      <figure>
+        <strong>{!!user.title ? `@${user.id}` : ''}</strong>
+        <strong>{!!user.status ? 'Support' : user.type || ''}</strong>
+        <strong>{!!user.activity ? date(user.activity) : ''}</strong>
+        <hr>
+        <table>
+          {#if !!user.Table && !!Object.keys(user.Table).length}
+            {#each Object.entries(user.Table) as [type, value]}
+              <tr><td>{type}:</td><td>{value}</td></tr>
+            {/each}
+          {/if}
+          {#if !!user.scribes && !!user.scribes.length}
+            <tr><td>Scribes:</td><td>{user.scribes.join(', ')}</td></tr>
+          {/if}
+          {#if !!user.ignores && !!user.ignores.length}
+            <tr><td>Ignores:</td><td>{user.ignores.join(', ')}</td></tr>
+          {/if}
+        </table>
+      </figure>
+    {/if}
+    <img
+      class="loading"
+      src="{$_images.users[user.id]||$empty}"
+      alt="{user.id}"
+      on:load="$showImage(this)"
+    >
+    <a href="#users?id={user.id}" hidden>{user.id}</a>
+  </article>
+  {#if $isAlone}
+    <figure>
+      <button on:click="$logout()" hidden="{!$isSigned||user.id!==$_id}">Sign Out</button>
+      <a href="#goods?search={'{auth:'+user.id+'}'}" hidden="{isTagged.ignore}">Find Goods</a>
+      <a href="#posts?search={'{auth:'+user.id+'}'}" hidden="{isTagged.ignore}">Find Posts</a>
+      <button
+        on:click="$tag('subscribe',user.id)"
+        disabled="{$busy||!$isSigned}"
+        hidden="{user.id===$_id||isTagged.ignore}"
+      >
+        {!isTagged.scribe ? 'Subscribe' : 'Unsuscribe'}
+      </button>
+      <button
+        on:click="$tag('ignore',user.id)"
+        disabled="{$busy||!$isSigned}"
+        hidden="{user.id===$_id||isTagged.scribe}"
+      >
+        {!isTagged.ignore ? 'Ignore' : 'Unignore'}
+      </button>
+      <button
+        on:click="$openModal('form')"
+        hidden="{!$isSigned||user.id!==$_id}"
+      >Edit</button>
+      <button
+        on:click="$openModal('activity')"
+        hidden="{!$isSigned||user.id!==$_id}"
+        class:red="!!$comments.activity.count"
+      >Activity</button>
+    </figure>
+  {/if}
+{/each}
+<script>
+export default {
+  immutable: true,
+  helpers: {
+    date: (unix) => store.dateFormat(unix)
+  },
+  computed: {
+    isTagged: ({ $curItem, $tagged, $isSigned }) => {
+      if (!$isSigned || !$curItem) return { scribe: false, ignore: false }
+      return {
+        scribe: !!~$tagged.scribes.indexOf($curItem.id.toLowerCase()),
+        ignore: !!~$tagged.ignores.indexOf($curItem.id.toLowerCase())
+      }
+    }
+  }
+}
+</script>

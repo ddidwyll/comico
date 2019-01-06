@@ -1,0 +1,824 @@
+@charset "UTF-8";
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Ubuntu Regular"), local("Ubuntu-Regular"), url("/fonts/UbuntuCyr.woff2") format("woff2");
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Ubuntu Regular"), local("Ubuntu-Regular"), url("/fonts/UbuntuLat.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* reset */
+* {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-weight: 400;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  text-decoration: none;
+  background: none;
+  vertical-align: baseline;
+  outline: none;
+  cursor: default;
+  font-style: normal;
+}
+html, body, main, header,
+div, p, nav, form, strong,
+section, article, figure,
+h1, h2, h3, input, textarea {
+  display: block;
+}
+::-moz-focus-inner {
+  border: 0;
+}
+::-webkit-scrollbar {
+  width: 0;
+}
+/* helpers */
+.hidden, *[hidden] {
+  display: none;
+}
+.visible,
+.invisible {
+  transition: opacity .4s;
+}
+.invisible {
+  pointer-events: none;
+  opacity: 0;
+}
+.visible {
+  pointer-events: auto;
+  opacity: 1;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-default {
+  cursor: default;
+}
+.cursor-text {
+  cursor: text;
+}
+.cursor-inherit {
+  cursor: inherit;
+}
+.white-bg {
+  background-color: #fff;
+  .dark & {
+    background: #454545;
+  }
+}
+.dark-bg {
+  background-color: rgba(100,100,100,.4);
+  .dark & {
+    background-color: rgba(60, 60, 60, 0.5);
+  }
+}
+.text-color {
+  color: #777;
+  &.dark, .dark & {
+    color: #e2e1d9;
+  }
+}
+.text-color-white {
+  color: #ddd;
+  &.dark, .dark & {
+    color: #e2e1d9;
+  }
+}
+.red {
+  color: indianred;
+}
+.large {
+  font-size: 1.1rem;
+}
+.small {
+  font-size: 0.9rem;
+}
+.text-center {
+  text-align: center;
+}
+.capit {
+  &:first-letter {
+    text-transform: uppercase;
+  }
+}
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.container-sm {
+  width: 90%;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.width {
+  width: 100%;
+  max-width: 100%;
+}
+.height {
+  height: 100%;
+  max-height: 100%;
+}
+.overflow {
+  overflow: hidden;
+}
+.fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+.fixedtop {
+  top: 0;
+}
+.fixedbottom {
+  bottom: 0;
+}
+.border {
+  border: 0px solid #ddd;
+  border-radius: 2px;
+  .dark & {
+    border-radius: 0;
+    box-shadow: 0 0 3px 1px #3a3a3a;
+  }
+}
+.border-top {
+  border-top: 1px solid #ddd;
+  .dark & {
+    border-color: #555;
+  }
+}
+.border-bottom {
+  border-bottom: 1px solid #ddd;
+  .dark & {
+    border-color: #555;
+  }
+}
+.bordered {
+  border-bottom: 2px solid transparent;
+  transition: border-color .3s;
+  &.active {
+    pointer-events: none;
+  }
+  &.active {
+    border-color: #a5a5a5;
+    color: inherit;
+    .dark & {
+      border-color: #e2e1d9;
+    }
+  }
+  &:focus, &:hover {
+    border-color: indianred !important;
+    color: inherit;
+  }
+}
+.circle:not(#hack) {
+  border-radius: 50%;
+}
+.padding {
+  padding: 2vmin 3vmin;
+}
+.padding-sm {
+  padding: 1vmin 2vmin;
+}
+.margin {
+  margin: 2vmin 3vmin;
+}
+.margin-sm {
+  margin: 1vmin 2vmin;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+}
+.wrap {
+  flex-wrap: wrap;
+}
+.nowrap {
+  flex-wrap: nowrap;
+}
+.space-between {
+  justify-content: space-between;
+}
+.center {
+  justify-content: center;
+}
+.start {
+  justify-content: flex-start;
+}
+.end {
+  justify-content: flex-end;
+}
+.middle {
+  align-items: center;
+}
+.top {
+  align-items: flex-start;
+}
+.stretch {
+  align-items: stretch;
+}
+.first {
+  order: -1;
+}
+.last {
+  order: 1;
+}
+.grow {
+  flex-grow: 1;
+}
+.shrink {
+  flex-shrink: 1;
+}
+.left, .right {
+  min-width: 170px;
+  .phone & {
+    min-width: inherit;
+  }
+}
+.right {
+  text-align: right;
+}
+.left {
+  text-align: left;
+}
+.one-line {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.pulse {
+  animation: pulse 1s infinite linear;
+}
+/* inputs */
+a, button, input[type=submit],
+input[type=button] {
+  transition: color .3s;
+  svg {
+    transition: fill .3s;
+    fill: #888;
+    .dark & {
+      fill: #bbb;
+    }
+  }
+  &:not(.active), &:not(.active) svg {
+    @extend .cursor-pointer;
+  }
+  &:focus, &:hover, &:focus svg, &:hover svg {
+    fill: indianred;
+    @extend .red;
+  }
+}
+
+.busy {
+  input[type=submit],
+  input[type=button],
+  button {
+    &:not(#hack) {
+      @extend .disabled;
+    }
+  }
+}
+  
+input[type=text],
+input[type=search],
+input[type=password],
+textarea {
+  @extend .bordered;
+  @extend .cursor-text;
+}
+.disabled, *[disabled] {
+  pointer-events: none;
+  opacity: 0.4;
+  box-shadow: none !important;
+}
+::placeholder {
+  @extend .text-color;
+  @extend .small;
+  opacity: 0.5;
+}
+/* html, body */
+html {
+  font-size: 15px;
+  font-family: Ubuntu, Roboto, sans-serif;
+  line-height: 1.5;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+body {
+  @extend .white-bg;
+  @extend .text-color;
+  background-image: linear-gradient(0deg,rgba(55,55,55,.7),rgba(55,55,55,.7)), url("./img/bg.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center top;
+  &.dark, &.phone {
+    background: scroll #454545 url("./img/noise.png");
+    background-size: inherit;
+  }
+}
+/* header */
+header {
+  &, figure {
+    @extend .fixed;
+    @extend .white-bg;
+    @extend .border;
+    @extend .padding-sm;
+    @extend .container;
+    @extend .row;
+    @extend .nowrap;
+    @extend .space-between;
+    @extend .middle;
+    height: 3rem;
+  }
+  .phone & {
+    @extend .wrap;
+    height: 5rem;
+    position: static;
+  }
+  @extend .fixedtop;
+  figure {
+    @extend .fixedbottom;
+    & > * {
+      margin: 3px 1vmin;
+    }
+    a, button {
+      @extend .large;
+      @extend .circle;
+      @extend .border;
+      @extend .row;
+      @extend .middle;
+      @extend .center;
+      width: 2.4rem;
+      line-height: 2.4rem;
+      height: 2.4rem;
+      box-shadow: 0 0 2px;
+      &:active {
+        box-shadow: none;
+      }
+    }
+    textarea, input[type=search] {
+      @extend .grow;
+    }
+    input[type=text] {
+      @extend .text-center;
+      @extend .small;
+      max-width: 2rem;
+    }
+  }
+  & > a {
+    @extend .first;
+    @extend .left;
+  }
+  h1 {
+    @extend .grow;
+    @extend .one-line;
+    @extend .large;
+    @extend .text-center;
+    @extend .capit;
+    .phone & {
+      @extend .width;
+      @extend .last;
+      padding-top: 7px;
+    }
+  }
+  nav {
+    @extend .right;
+    a {
+      @extend .bordered;
+      margin-left: 1rem;
+    }
+  }
+  .busy & a span {
+    @extend .pulse;
+  }
+}
+/* sections */
+section {
+  @extend .container;
+  &:first-child {
+    margin-top: calc(3rem + 3vmin);
+    .phone & {
+      margin-top: 1vmin;
+    }
+  }
+  &:last-child {
+    margin-bottom: calc(3rem + 3vmin);
+  }
+  &.goods,
+  &.users {
+    @extend .row;
+    @extend .wrap;
+    @extend .center;
+  }
+  &.comments,
+  &.posts {
+    @extend .column;
+    @extend .nowrap;
+    @extend .stretch;
+  }
+  & > figure {
+    @extend .row;
+    @extend .nowrap;
+    @extend .space-between;
+    @extend .white-bg;
+    @extend .margin-sm;
+    @extend .padding;
+    @extend .border;
+    button, a {
+      @extend .bordered;
+      @extend .small;
+      min-width: 2rem;
+    }
+  }
+  &.users > figure {
+    @extend .wrap;
+    @extend .first;
+    flex-basis: 100%;
+    justify-content: space-evenly;
+  }
+}
+/* articles */
+article {
+  @extend .white-bg;
+  @extend .grow;
+  @extend .margin-sm;
+  @extend .border;
+  position: relative;
+  section.posts:not(.alone) &:active,
+  section.posts:not(.alone) &:focus {
+    left: 5px;
+  }
+  section.goods:not(.alone) &:active,
+  section.users:not(.alone) &:active,
+  section.goods:not(.alone) &:focus,
+  section.users:not(.alone) &:focus {
+    bottom: 5px;
+  }
+  .alone &, .comments &, .posts & {
+    @extend .row;
+    @extend .wrap;
+    @extend .space-between;
+    @extend .padding;
+    h2 {
+      @extend .left; @extend .small;
+    }
+    & > a {
+      @extend .right; @extend .small;
+    }
+    figure {
+      @extend .grow;
+      max-width: calc(100% - 220px);
+      .phone & {
+        @extend .width;
+      }
+    }
+    p {
+      @extend .width;
+      @extend .capit;
+      padding-bottom: 0.6rem;
+    }
+    strong {
+      @extend .grow;
+      @extend .one-line;
+      @extend .small;
+      @extend .text-center;
+    }
+    hr {
+      @extend .width;
+      @extend .border-top;
+      margin: 0.7rem 0;
+    }
+  }
+  .comments &, .users & {
+    @extend .top;
+    padding: 0;
+    table {
+      td {
+        @extend .small;
+        border: 0;
+        padding: 5px 0;
+      }
+    }
+    figure {
+      @extend .padding;
+      @extend .row;
+      @extend .wrap;
+      @extend .end;
+      max-width: calc(100% - 130px - 4vmin);
+      strong:first-of-type {
+        @extend .left;
+      }
+      strong:last-of-type {
+        @extend .right;
+      }
+      button {
+        @extend .small;
+        margin-left: 1rem;
+      }
+    }
+  }
+  .users:not(.alone) & {
+    @extend .overflow;
+    @extend .cursor-pointer;
+    @extend .text-center;
+    margin-left: 1vmin;
+    margin-right: 1vmin;
+    max-width: 180px;
+    flex-basis: 180px;
+    h1 {
+      @extend .border-bottom;
+      @extend .small;
+      @extend .one-line;
+      line-height: 3.3;
+    }
+  }
+  .posts:not(.alone) & {
+    &, & > * {
+      @extend .cursor-pointer;
+    }
+    h1 {
+      @extend .row;
+      @extend .space-between;
+      @extend .one-line;
+      @extend .width;
+      @extend .last;
+      line-height: 2.2;
+      b {
+        @extend .small;
+      }
+    }
+  }
+  .goods:not(.alone) & {
+    @extend .column;
+    @extend .start;
+    @extend .stretch;
+    @extend .overflow;
+    @extend .cursor-pointer;
+    max-width: 300px;
+    flex-basis: 260px;
+    padding-bottom: 0.3rem;
+    margin-left: 1vmin;
+    margin-right: 1vmin;
+    & > h1, & > h2, & > strong  {
+      @extend .cursor-inherit;
+      @extend .one-line;
+      padding: 0 1rem;
+      line-height: 3.4rem;
+    }
+    & > h2, & > strong  {
+      @extend .small;
+    }
+    h1 {
+      @extend .text-color-white;
+      @extend .dark-bg;
+      @extend .row;
+      @extend .space-between;
+      @extend .capit;
+      z-index: 1;
+      line-height: 3.7rem;
+      margin-top: -3.7rem;
+      border-top: 1px solid rgba(200,200,200,.1);
+      b { @extend .small }
+    }
+    h2 {
+      @extend .border-bottom;
+    }
+    hr { @extend .hidden; }
+  }
+}
+/* images */
+img {
+  @extend .cursor-inherit;
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  border-radius: 2px;
+  transition: filter .4s;
+  filter: none;
+  &.loading {
+    filter: opacity(0);
+  }
+  .alone & {
+    @extend .cursor-pointer;
+    max-width: 200px;
+    align-self: flex-start;
+    .phone & {
+      max-width: 100%;
+      margin: auto;
+    }
+  }
+  .users & {
+    @extend .cursor-inherit;
+    max-width: 130px;
+  }
+  .comments & {
+    @extend .cursor-pointer;
+    width: 130px;
+    border-radius: 0 2px 2px 0;
+    .phone & {
+      @extend .hidden;
+    }
+  }
+  .goods:not(.alone) & {
+    @extend .first;
+    align-self: center;
+    max-width: 200%;
+    height: 235px;
+  }
+  aside > &,
+  aside > figure & {
+    @extend .cursor-inherit;
+    @extend .border;
+    max-height: 100%;
+  }
+  aside > figure & {
+    max-width: 300%;
+  }
+  form & {
+    @extend .cursor-pointer;
+    box-shadow: 0 0 0 2px;
+    max-height: 81px;
+  }
+}
+/* aside */
+aside {
+  @extend .column;
+  @extend .invisible;
+  @extend .fixed;
+  @extend .fixedtop;
+  @extend .fixedbottom;
+  @extend .middle;
+  @extend .center;
+  @extend .cursor-pointer;
+  background-color: rgba(55,55,55,0.55);
+  .modal & {
+    @extend .visible;
+  }
+  & > figure {
+    @extend .text-center;
+    @extend .fixed;
+    @extend .fixedbottom;
+    @extend .width;
+    button {
+      @extend .overflow;
+      @extend .circle;
+      border: 2px solid;
+      height: 45px;
+      width: 45px;
+      margin: 5px;
+      &.loading {
+        @extend .hidden;
+      }
+    }
+  }
+  & > strong {
+    @extend .fixed;
+    @extend .fixedtop;
+    @extend .padding-sm;
+    @extend .large;
+    @extend .text-color-white;
+    @extend .text-center;
+    @extend .dark-bg;
+    @extend .container;
+    @extend .capit;
+    line-height: 3rem;
+    .phone & {
+      @extend .hidden;
+    }
+  }
+  & > div {
+    @extend .container-sm;
+    @extend .white-bg;
+    @extend .padding;
+    overflow-y: auto;
+    max-height: 90%;
+  }
+}
+/* forms */
+form {
+  @extend .border;
+  @extend .padding;
+  @extend .white-bg;
+  @extend .container-sm;
+  overflow-y: auto;
+  max-height: 90%;
+  &.login {
+    max-width: 380px;
+    p {
+      @extend .red;
+      @extend .one-line;
+    }
+    figure {
+      @extend .text-center;
+      & > * {
+        @extend .bordered;
+        margin: 5px;
+        min-width: 30%;
+      }
+    }
+  }
+  input, textarea {
+    padding: 8px 0;
+  }
+  & > * {
+    @extend .width;
+  }
+  input[type=submit],
+  input[type=button] {
+    &:hover, &:focus {
+      @extend .red;
+    }
+  }
+  hr {
+    @extend .width;
+    @extend .border-top;
+  }
+  div {
+    @extend .row;
+    @extend .nowrap;
+    @extend .stretch;
+    &:last-child {
+      margin: 7px 0 0;
+    }
+    * {
+      @extend .shrink;
+    }
+    & > input:first-child,
+    & > input:last-child {
+      max-width: 100px;
+    }
+    input:not(:last-child):not(:first-child){
+      @extend .grow;
+      @extend .one-line;
+      margin: 0 5px;
+    }
+    textarea, figure {
+      @extend .grow;
+      margin-right: 10px;
+      & > * {
+        @extend .width;
+      }
+    }
+  }
+}
+/* tables */
+table {
+  @extend .width;
+  border-spacing: 0;
+  aside & td {
+    @extend .cursor-pointer;
+    & > * {
+      @extend .cursor-inherit;
+    }
+  }
+  td, tbody th {
+    @extend .border-top;
+    vertical-align: middle;
+    padding: 8px 0;
+  }
+  th {
+    font-size: 1rem;
+  }
+  td:first-child {
+    @extend .capit;
+    @extend .small;
+    width: 130px;
+  }
+  figure {
+    @extend .text-center;
+    button {
+      @extend .bordered;
+      @extend .capit;
+      min-width: 80px;
+      margin: 7px 10px 20px;
+    }
+  }
+}

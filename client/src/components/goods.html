@@ -1,0 +1,45 @@
+{#each (!!$curItem ? [$curItem] : $pagedItems) as good, index (good.id)}
+  <article
+    on:click="$goto($isAlone?{}:{id:good.id,search:null,page:null})"
+    on:keydown="$goto({id:good.id,search:null,page:null,event})"
+    tabindex="{$isAlone?-1:index+5}"
+  >
+    <h1 hidden="{$isAlone}">
+      {good.title}
+      {#if !!$comments.goods[good.id]}
+        <b>
+          {$comments.goods[good.id].length + ' / ' + ($comments.activity.goods[good.id] ? $comments.activity.goods[good.id].length : '0')}
+        </b>
+      {/if}
+    </h1>
+    <h2 on:dblclick="$goto({id:null,search:good.type})">{good.type}</h2>
+    <strong>{good.price}</strong>
+    <a href="#users?id={good.auth}" hidden="{!$isAlone}">@{good.auth}</a>
+    <hr>
+    {#if $isAlone}
+      <figure>
+        {#each good.text.split('\n') as t}<p>{t}</p>{/each}
+        {#if !!good.Table && !!Object.keys(good.Table).length}
+          <table>
+            {#each Object.entries(good.Table) as [type, value]}
+              <tr><td>{type}:</td><td>{value}</td></tr>
+            {/each}
+          </table>
+        {/if}
+      </figure>
+    {/if}
+    <img
+      class="loading"
+      src="{$_images.goods[good.id]||$empty}"
+      alt="{good.title}"
+      class:disabled="!$_images.goods[good.id]"
+      on:click="$openModal($isAlone?'image':'')"
+      on:load="$showImage(this)"
+    >
+    <a href="#goods?id={good.id}" hidden>{good.title}</a>
+  </article>
+{/each}
+
+<script>
+export default { immutable: true }
+</script>

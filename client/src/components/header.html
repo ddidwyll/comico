@@ -1,0 +1,202 @@
+<h1 class:red="!!$message">{$message || $title}</h1>
+ 
+<a href="{$isSigned?'#users?id='+$_id:$curHash}"
+  on:click="$openModal($isSigned?'':'signin')"
+  class:disabled="!$online"
+>
+  <span>=^.^=</span> {$isSigned ? $_id : $online ? 'signin' : 'offline'}
+  {#if !!$comments.activity.count}<sup>+{$comments.activity.count}</sup>{/if}
+</a>
+
+<nav>
+  {#each links as link}
+    <a href="#{!($_lastHash||'').indexOf(link.href)?$_lastHash:link.href}"
+      tabindex="{$hashType===link.href&&!$isAlone?-1:0}"
+      class:active="$hashType===link.href&&!$isAlone">
+      {link.title}
+    </a>
+  {/each}
+</nav>
+
+{#if $isGood || $isPost || $isUser}
+  <figure>
+    {#if $isAlone && !!$curItem}
+      <a href="#{$_lastHash}"
+        title="Back"
+        aria-label="Back"
+        class:disabled="!$_lastHash"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+      </a>
+      <a href="#{$hashType}?id={$curItem.prev}"
+        class:disabled="!$curItem.prev"
+        title="Prev"
+        aria-label="Prev"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+      </a>
+      <a href="#{$hashType}?id={$curItem.next}"
+        class:disabled="!$curItem.next"
+        title="Next"
+        aria-label="Next"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+        </svg>
+      </a>
+      <button
+        on:click="$openModal('form')"
+        hidden="{!$isMy||$isUser}"
+        title="Edit"
+        aria-label="Edit"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+        </svg>
+      </button>
+      <button
+        on:click="renew()" title="Up" aria-label="Up"
+        hidden="{!$isMy||$curItem.id>$now-24*3600||$isUser}"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+      </button>
+      <textarea
+        placeholder="{!$online?'offline':'Your comment'}"
+        aria-label="{!$online?'offline':'Your comment'}"
+        rows="1"
+        disabled="{!$isSigned}"
+        bind:value="$_comment"
+        maxLength="500"
+        on:keydown="sendComment(event)"
+      ></textarea>
+      <button
+        on:click="sendComment()"
+        hidden="{!$isSigned}"
+        disabled="{!form.text}"
+        title="Send"
+        aria-label="Send"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    {:else}
+      <button
+        on:click="$prevPage()"
+        disabled="{!+$hashPage}"
+        title="Prev page"
+        aria-label="Prev page"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <input
+        value="{$hashPage||0}/{$maxPages}"
+        aria-label="Page number"
+        type="text"
+        disabled
+        tabindex="-1"
+      >
+      <button
+        on:click="$nextPage()"
+        disabled="{+$hashPage===$maxPages||!$maxPages}"
+        title="Next page"
+        aria-label="Next page"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+        </svg>
+      </button>
+      <input
+        on:input="$search(this.value)"
+        value="{searchValue}"
+        placeholder="Search {$hashType}"
+        aria-label="Search {$hashType}"
+        type="search" role="search"
+      >
+      <button
+        on:click="$set({_isScribes:!$_isScribes})"
+        hidden="{!$tagged.scribes.length||$isUser}"
+        class:active="$_isScribes"
+        title="{$_isScribes ? 'Fav' : 'All'}"
+        aria-label="{$_isScribes ? 'Fav' : 'All'}"
+      >{$_isScribes ? '✪' : '✫'}</button>
+      <button
+        on:click="$openModal('form')"
+        hidden="{!$isSigned||$isUser}"
+        title="Add"
+        aria-label="Add"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+        </svg>
+      </button>
+    {/if}
+    {#if !$isSigned}
+      <button disabled title="Disabled" aria-label="Disabled">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM4 12c0-4.42 3.58-8 8-8 1.85 0 3.55.63 4.9 1.69L5.69 16.9C4.63 15.55 4 13.85 4 12zm8 8c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1C19.37 8.45 20 10.15 20 12c0 4.42-3.58 8-8 8z"/>
+        </svg>
+      </button>
+    {/if}
+  </figure>
+{/if}
+
+<script>
+export default {
+  immutable: true,
+  data() {
+    return {
+      links: [
+        { href: 'goods', title: 'Goods' },
+        { href: 'posts', title: 'Posts' },
+        { href: 'users', title: 'Users' }
+      ]
+    }
+  },
+  methods: {
+    async sendComment(e = { keyCode: 13, ctrlKey: true }) {
+      if (e.keyCode !== 13 || !e.ctrlKey) return
+      this.store.take()
+      const { headers, isSigned, curItem } = this.store.get()
+      const { form } = this.get(), options = { headers }
+      if (!curItem || !isSigned || !form.text) return
+      form.id = (Date.now() * 1000).toString().slice(0, 13)
+      options.body = JSON.stringify(form)
+      options.method = 'POST'
+      const response = await fetch(location.origin + '/api/cmnts', options).catch(() => null)
+      const result = !response ? 'Connection error' : await response.json()
+      if (!!response && response.ok) {
+        await this.store.checkUpdate('cmnts')
+        this.store.set({ _comment: '' })
+        this.store.goto({ page: this.store.get().maxPages || null })
+        setTimeout(() => scrollTo(0, 999999), 150)
+      } this.store.release()
+      this.store.message(result.message || result)
+    },
+    async renew() {
+      const { headers, isSigned, curItem, hashType } = this.store.get()
+      if (!curItem || !isSigned) return
+      this.store.take()
+      const response = await fetch(`${location.origin}/api/renew/${hashType}/${curItem.id}`, { headers }).catch(() => null)
+      const result = !response ? 'Connection error' : await response.json()
+      if (!!response && response.ok) {
+        await this.store.checkUpdate(hashType)
+        setTimeout(() => this.store.checkUpdate('cmnts') && this.store.checkUpdate('files'), 1500)
+        this.store.goto({ id: null, page: null, search: null })
+      } this.store.release()
+      this.store.message(result.message || result)
+    }
+  },
+  computed: {
+    searchValue: ({ $hash }) => location.hash.split('search=').length === 2 ? decodeURI(location.hash.split('search=')[1]) : '',
+    to: ({ $_comment }) => $_comment.startsWith('@') ? $_comment.search('@*,') : -1,
+    form: ({ $_id, $_comment, $hashType, $hashId, to, $curItem, $isUser }) => ({
+      auth: $_id, owner: $hashId, type: $hashType,
+      text: !!~to ? $_comment.slice(to + 1).trim() : $_comment,
+      to: !!~to ? $_comment.slice(1, to).slice(0, 15) : $curItem ? $isUser ? $curItem.id : $curItem.auth : ''
+    })
+  }
+}
+</script>

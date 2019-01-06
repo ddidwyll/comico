@@ -1,0 +1,82 @@
+<form
+  action="/api/posts"
+  method="{$method}"
+  onsubmit="return false"
+>
+  <input value="{$form.id}" name="id" hidden>
+  <input value="{$form.auth}" name="auth" hidden>
+  <input
+    type="text"
+    on:input="$setForm(this.value,'title')"
+    value="{$form.title}"
+    placeholder="Title"
+    aria-label="Title"
+    maxLength="35"
+    name="title"
+  >
+  <hr>
+  <input
+    type="text"
+    on:input="$setForm(this.value,'type')"
+    value="{$form.type}"
+    placeholder="Type"
+    aria-label="Type"
+    maxLength="25"
+    name="type"
+  >
+  <hr>
+  <textarea
+    placeholder="Text"
+    aria-label="Text"
+    on:input="$setForm(this.value,'text')"
+    value="{$form.text}"
+    maxLength="1000"
+    name="text"
+    rows="4"
+  ></textarea>
+  <hr>
+  <div>
+    <input
+      type="button"
+      class="red"
+      on:click="$DELETE($hashType,$curItem.id)"
+      hidden="{!$curItem}"
+      value="Delete"
+    >
+    <input
+      type="submit"
+      disabled="{!!formErrs}"
+      on:click="$PUST({form:$form,formErrs})"
+      value="{$message||formErrs||'Submit'}"
+      class:red="!!$message"
+    >
+    <input
+      type="button"
+      on:click="$closeModal()"
+      value="Cancel"
+    >
+  </div>
+</form>
+
+<script>
+export default {
+  immutable: true,
+  computed: {
+    formErrs: ({ $form }) => {
+      if (!$form.title && !$form.type) return '\n'
+      const title = !$form.title ? 'Title required' : ''
+      const type = !$form.type ? 'Type required' : ''
+      const text = !$form.text ? 'Text required' : ''
+      return title || type || text
+    }
+  },
+  oncreate() {
+    const { curItem, _postsEdit, _postsAdd, _id } = this.store.get()
+    let form = {}
+    if (!!curItem) form = !!_postsEdit && curItem.id === _postsEdit.id ? _postsEdit : curItem
+    else form = !!_postsAdd && (!!_postsAdd.title || !!_postsAdd.text) ? _postsAdd :
+      { id: '', title: '', type: '', text: ''}
+    this.store.set({ form })
+  }
+}
+</script>

@@ -1,0 +1,62 @@
+<div><table>
+  <thead><tr><th colspan="3"><figure>
+    {#each new Array('goods', 'posts', 'users') as key}
+      <button
+        on:click="$set({_activityType:key})"
+        class:active="type===key"
+      >
+        {key}
+        <sup hidden="{!$comments.activity[key+'Count']}">
+          +{$comments.activity[key+'Count']}
+        </sup>
+      </button>
+    {/each}
+  </figure></th></tr></thead>
+  <tbody>
+    {#each activities as [id, cmnts]}
+      <tr>
+        <th colspan="3">{get(type, id).title || get(type, id).id || ''}</th>
+      </tr>
+      {#each cmnts as cmnt}
+        <tr on:click="$gotoCmnt(type,id,cmnt.index)">
+          <td class:red="cmnt.id>$me.activity*1000">
+            <p>{cmnt.auth}</p>
+            <small>{date(cmnt.id/1000^0)}</small>
+          </td>
+          <td>{cmnt.text}</td>
+        </tr>
+      {/each}
+    {/each}
+    {#if !activities.length}
+      <tr>
+        <th colspan="3">No activity yet</th>
+      </tr>
+    {/if}
+  </tbody>
+</table></div>
+
+<script>
+export default {
+  immutable: true,
+  computed: {
+    type: ({ $_activityType }) => $_activityType || 'goods',
+    activities: ({ type, $comments }) =>
+      Object.entries($comments.activity[type]).sort((a, b) => 
+        +b[1][b[1].length-1].id - +a[1][a[1].length-1].id)
+  },
+  helpers: {
+    get: (type, id) => store.getOne(type, id),
+    date: (unix) => store.dateFormat(unix)
+  },
+  oncreate() {
+    const { isSigned, headers } = this.store.get()
+    fetch(location.origin + '/api/activity', { headers })
+    this.interval = setInterval(() => isSigned &&
+      fetch(location.origin + '/api/activity', { headers }), 90000)
+  },
+  ondestroy() {
+    clearInterval(this.interval)
+    this.store.checkUpdate('users')
+  }
+}
+</script>

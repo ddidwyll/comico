@@ -1,0 +1,47 @@
+<Pager />
+{#each $pagedItems as cmnt}
+  <article>
+    <figure>
+      <strong>
+        {cmnt.auth}
+      </strong>
+      <strong class:disabled="cmnt.to!==$_id" hidden="{cmnt.to===cmnt.auth}">
+        to {cmnt.to !== $_id ? cmnt.to : 'you'}
+      </strong>
+      <strong>
+        {date(cmnt.id/1000^0)}
+      </strong>
+      <hr>
+      {#each cmnt.text.split('\n') as t}<p>{t}</p>{/each}
+      <button
+        on:click="$reply(cmnt.auth)"
+        hidden="{$_id===cmnt.auth}"
+        disabled="{!$isSigned}"
+      >Reply</button>
+      <button
+        class="red"
+        on:click="$DELETE('cmnts',[cmnt.owner,$hashType,cmnt.id].join(':'))"
+        hidden="{!$isSigned||($_id!==cmnt.auth&&!$me.status)}"
+      >Delete</button>
+    </figure>
+    <img
+      src="{$_images.users[cmnt.auth]||$empty}"
+      alt="{cmnt.auth}"
+      on:click="$goto({type:'users',id:cmnt.auth,page:null,search:null})"
+    >
+  </article>
+{/each}
+{#if $pagedItems.length > 5}
+  <Pager />
+{/if}
+<script>
+export default {
+  immutable: true,
+  components: {
+    Pager: './cmntsPager.html'
+  },
+  helpers: {
+    date: (unix) => store.dateFormat(unix)
+  }
+}
+</script>

@@ -1,0 +1,46 @@
+{#if $online}
+  {#if $isSignIn || $isSignUp}
+    <Login />
+  {/if}
+{:elseif !$isImage}
+  <p>There is no connection...</p>
+{/if}
+{#if $isSigned}
+  {#if $isGood && $isForm}
+    <GoodForm />
+  {/if}
+  {#if $isPost && $isForm}
+    <PostForm />
+  {/if}
+  {#if $isUser && $isForm}
+    <UserForm />
+  {/if}
+  {#if $isActivity}
+    <Activity />
+  {/if}
+{/if}
+{#if $isGood && $isImage && $isAlone}
+  <GoodImage />
+{/if}
+
+<script>
+export default {
+  immutable: true,
+  components: {
+    Login: './login.html',
+    Activity: './activity.html',
+    GoodForm: './goodForm.html',
+    PostForm: './postForm.html',
+    UserForm: './userForm.html',
+    GoodImage: './goodImage.html'
+  },
+  computed: {
+    check: ({ $isForm }) => $isForm &&
+      store.checkUpdate(store.get().hash.type)
+  },
+  oncreate() {
+    const aside = this.options.target
+    aside.addEventListener('click', this.store.closeModal)
+  }
+}
+</script>

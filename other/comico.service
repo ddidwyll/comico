@@ -1,0 +1,17 @@
+[Unit]
+Description=Comico (=^.^=)
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=comico
+Group=comico
+WorkingDirectory=/var/www/comico/go/src/comico
+ExecStart=/var/www/comico/go/src/comico/comico
+PermissionsStartOnly=true
+ExecStartPre=/usr/sbin/setcap 'cap_net_bind_service=+ep' /var/www/comico/go/src/comico/comico
+NonBlocking=true
+
+[Install]
+WantedBy=multi-user.target
