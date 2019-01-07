@@ -504,7 +504,7 @@ article {
       @extend .capit;
       padding-bottom: 0.6rem;
     }
-    strong {
+    strong, figure a {
       @extend .grow;
       @extend .one-line;
       @extend .small;
@@ -532,7 +532,7 @@ article {
       @extend .wrap;
       @extend .end;
       max-width: calc(100% - 130px - 4vmin);
-      strong:first-of-type {
+      strong:first-child, a:first-child {
         @extend .left;
       }
       strong:last-of-type {

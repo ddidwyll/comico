@@ -14,7 +14,10 @@
     </h1>
     <h2 on:dblclick="$goto({id:null,search:post.type})">{post.type}</h2>
     <strong>{date(post.id)}</strong>
-    <a href="#users?id={post.auth}">@{post.auth}</a>
+    <a href="#users?id={post.auth}"
+      class:disabled="!$users[post.auth]"
+      title="{$users[post.auth]||'deleted'}"
+    >@{post.auth}</a>
     <hr>
     {#if $isAlone}
       {#each post.text.split('\n') as t}<p>{t}</p>{/each}

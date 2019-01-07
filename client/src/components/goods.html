@@ -14,7 +14,12 @@
     </h1>
     <h2 on:dblclick="$goto({id:null,search:good.type})">{good.type}</h2>
     <strong>{good.price}</strong>
-    <a href="#users?id={good.auth}" hidden="{!$isAlone}">@{good.auth}</a>
+    {#if $isAlone}
+      <a href="#users?id={good.auth}"
+        class:disabled="!$users[good.auth]"
+        title="{$users[good.auth]||'deleted'}"
+      >@{good.auth}</a>
+    {/if}
     <hr>
     {#if $isAlone}
       <figure>

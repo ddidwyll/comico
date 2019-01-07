@@ -2,9 +2,10 @@
 {#each $pagedItems as cmnt}
   <article>
     <figure>
-      <strong>
-        {cmnt.auth}
-      </strong>
+      <a href="#users?id={cmnt.auth}"
+        class:disabled="!$users[cmnt.auth]"
+        title="{$users[cmnt.auth]||'deleted'}"
+      >@{cmnt.auth}</a>
       <strong class:disabled="cmnt.to!==$_id" hidden="{cmnt.to===cmnt.auth}">
         to {cmnt.to !== $_id ? cmnt.to : 'you'}
       </strong>
@@ -27,6 +28,7 @@
     <img
       src="{$_images.users[cmnt.auth]||$empty}"
       alt="{cmnt.auth}"
+      class:disabled="!$users[cmnt.auth]"
       on:click="$goto({type:'users',id:cmnt.auth,page:null,search:null})"
     >
   </article>

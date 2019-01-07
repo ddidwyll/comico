@@ -157,8 +157,8 @@ async function checkUpdates() {
 proto.PUST = async function({ form = {}, formErrs }, type) {
   const { isSigned, curItem, hashType, _id, headers, method } = this.get()
   if (!!formErrs || !isSigned) return
-  this.take()
   type = type || hashType
+  this.take()
   if (!curItem && type !== 'users') form = Object.assign(form, { id: now(), auth: _id })
   const body = JSON.stringify(form)
   const response = await fetch(api + type, { method, headers, body }).catch(() => null)
@@ -232,8 +232,8 @@ store.compute('isAlone', ['hashId'], (id) => !!id)
 store.compute('isPost', ['hashType'], (type) => type === 'posts')
 store.compute('isGood', ['hashType'], (type) => type === 'goods')
 store.compute('isUser', ['hashType'], (type) => type === 'users')
-store.compute('hashSearch', ['hash'], (hash) => {
-  const search = hash.search || '', start = search.indexOf('{'), end = search.lastIndexOf('}'), result = {}
+store.compute('hashSearch', ['hash'], (hash, result = {}) => {
+  const search = hash.search || '', start = search.indexOf('{'), end = search.lastIndexOf('}')
   if (!search || !~start) return { search }
   if (!~end) return { search: search.slice(0, start) }
   search.slice(start + 1, end).split(',').forEach(str => {
@@ -265,7 +265,7 @@ store.compute('isSignUp', ['_modal'], (modal) => modal === 'signup')
 store.compute('isForm', ['_modal'], (modal) => modal === 'form')
 store.compute('isImage', ['_modal'], (modal) => modal === 'image')
 store.compute('isActivity', ['_modal'], (modal) => modal === 'activity')
-/* click to open modal 'type' */
+/* open modal 'type' */
 proto.openModal = (type) => store.set({ _modal: type })
 /* click to close modal */
 proto.closeModal = (event = { target: { nodeName: 'ASIDE' } }) =>
@@ -277,8 +277,8 @@ proto.closeModal = (event = { target: { nodeName: 'ASIDE' } }) =>
 store.compute('me', ['_id', '_users'], (id, users) => users.find(user => user.id === id) || null)
 store.compute('tagged', ['me'], (me) => ({
   ignores: me ? me.ignores || [] : [], scribes: me ? me.scribes || [] : [] }))
-store.compute('isSigned', ['_expire', 'now', 'me', 'online'], (expire, now, user, online) =>
-  expire > now && !!user && !!online)
+store.compute('isSigned', ['_expire', 'now', 'me', 'online'],
+  (expire, now, user, online) => expire > now && !!user && !!online)
 store.compute('isMy', ['isSigned', 'curItem', 'me'], (isSigned, item, me) =>
   !!isSigned && !!item && (item.auth === me.id || item.id === me.id || !!me.status))
 setInterval(() => store.set({ now: now() }), 3600000)
@@ -290,6 +290,11 @@ proto.logout = () => store.set({ _id: '', _expire: '', _token: '' })
 /* compute current items by type */
 store.compute('items', ['_goods', '_posts', '_users'],
   (goods, posts, users) => ({ goods, posts, users }))
+/* compute users map id=>name */
+store.compute('users', ['_users'], (users, result = {}) => {
+  users.forEach(user => { result[user.id] = user.title || user.id })
+  return result
+})
 /* compute comments and replies, group by owner type and id */
 store.compute('comments', ['_cmnts', 'me', 'tagged'], (items, me, tags) => {
   const activity = { goods: {}, posts: {}, users: {}, count: 0,
@@ -337,16 +342,12 @@ store.compute('curItems', ['ignoredItems', 'scribedItems', '_isScribes', 'hashTy
   (ignored, scribed, iS, type) => (iS ? scribed[type] : ignored[type]) || [])
 /* compute current, next and previous items, if 'id' in hash */
 store.compute('curItem', ['hashId', 'curItems'], (id, items) => {
-  // if (iD || !id) document.body.style = ''
   if (!id || !items || !items.length) return null
   const index = items.findIndex(item => item.id.toLowerCase() === id)
   if (!~index) return null
   const item = items[index]
   item.prev = items[index - 1] ? items[index - 1].id : ''
   item.next = items[index + 1] ? items[index + 1].id : ''
-  // if (!iD && !!images.goods[id]) body.style.backgroundImage =
-  //   'linear-gradient(0deg,rgba(66,66,66,.88),rgba(66,66,66,.88)),' +
-  //     `url("${images.goods[id].replace('_sm', '')}")`
   return item
 })
 /* compute current items by search filter */
