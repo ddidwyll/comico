@@ -67,9 +67,9 @@ type MTime struct {
 }
 
 type UserAction struct {
-	IP    string
-	User  string
-	Model byte
+	IP     string
+	User   string
+	Action string
 }
 
 func Model(t byte) Modeler {

@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/middleware"
 	"golang.org/x/crypto/acme/autocert"
 
-	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -25,13 +25,10 @@ func addCacheControl(maxAge string) echo.MiddlewareFunc {
 	}
 }
 
-func waitPlease(c echo.Context, db byte, sec int64) error {
+func waitPlease(c echo.Context, action string, sec int64) (bool, string) {
 	ua := new(model.UserAction)
-	ua.Init(c.RealIP(), userId(c), db)
-	if ua.IsWait(sec) {
-		return errors.New(cnst.WAIT)
-	}
-	return nil
+	ua.Init(c.RealIP(), userId(c), action)
+	return ua.IsWait(sec)
 }
 
 // USERID
@@ -56,8 +53,8 @@ func activity(c echo.Context) error {
 
 // SUBSCRIBE
 func subscribe(c echo.Context) error {
-	if err := waitPlease(c, cnst.ACTVT, 1); err != nil {
-		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.WAIT+"\"}"))
+	if isWait, sec := waitPlease(c, "scribe", 1); isWait {
+		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.Wait(sec)+"\"}"))
 	}
 	user := userId(c)
 	if user != "without_auth" {
@@ -68,8 +65,8 @@ func subscribe(c echo.Context) error {
 
 // IGNORE
 func ignore(c echo.Context) error {
-	if err := waitPlease(c, cnst.ACTVT, 1); err != nil {
-		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.WAIT+"\"}"))
+	if isWait, sec := waitPlease(c, "ignore", 1); isWait {
+		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.Wait(sec)+"\"}"))
 	}
 	user := userId(c)
 	if user != "without_auth" {
@@ -96,16 +93,16 @@ func files(c echo.Context) error {
 
 // REGISTER
 func register(c echo.Context) error {
-	if err := waitPlease(c, cnst.PASS, 2); err != nil {
-		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.WAIT+"\"}"))
+	if isWait, sec := waitPlease(c, "register", 5); isWait {
+		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.Wait(sec)+"\"}"))
 	}
 	return upsert(c, cnst.PASS, cnst.INS)
 }
 
 // LOGIN
 func login(c echo.Context) error {
-	if err := waitPlease(c, cnst.PASS, 3); err != nil {
-		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.WAIT+"\"}"))
+	if isWait, sec := waitPlease(c, "login", 2); isWait {
+		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.Wait(sec)+"\"}"))
 	}
 	p := new(model.Password)
 	if err := c.Bind(p); err != nil {
@@ -134,8 +131,8 @@ func login(c echo.Context) error {
 
 // UPSERT
 func upsert(c echo.Context, t, action byte) error {
-	if err := waitPlease(c, t+action*15, 1); err != nil {
-		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.WAIT+"\"}"))
+	if isWait, sec := waitPlease(c, fmt.Sprint("upsert", t, action), 2); isWait {
+		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.Wait(sec)+"\"}"))
 	}
 	m := model.Model(t)
 	user := userId(c)
@@ -169,8 +166,8 @@ func del(c echo.Context, t byte) error {
 
 // RENEW
 func renew(c echo.Context, t byte) error {
-	if err := waitPlease(c, t, 1); err != nil {
-		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.WAIT+"\"}"))
+	if isWait, sec := waitPlease(c, fmt.Sprint("renew", t), 1); isWait {
+		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.Wait(sec)+"\"}"))
 	}
 	lastId, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil || lastId > (time.Now().Unix()-24*3600) {
@@ -186,8 +183,8 @@ func renew(c echo.Context, t byte) error {
 
 // UPLOAD
 func upload(c echo.Context) error {
-	if err := waitPlease(c, cnst.FILE, 5); err != nil {
-		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.WAIT+"\"}"))
+	if isWait, sec := waitPlease(c, "upload", 3); isWait {
+		return c.JSONBlob(400, []byte("{\"message\":\""+cnst.Wait(sec)+"\"}"))
 	}
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -316,13 +313,13 @@ func Start() {
 			Cache:      autocert.DirCache("./.cache"),
 			ForceRSA:   true,
 		}
-  	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
-  		XSSProtection:         "1; mode=block",
-  		ContentTypeNosniff:    "nosniff",
-  		XFrameOptions:         "DENY",
-  		HSTSMaxAge:            31536000,
-  		ContentSecurityPolicy: "default-src 'self' 'unsafe-inline'; img-src * data:",
-  	}))
+		e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
+			XSSProtection:         "1; mode=block",
+			ContentTypeNosniff:    "nosniff",
+			XFrameOptions:         "DENY",
+			HSTSMaxAge:            31536000,
+			ContentSecurityPolicy: "default-src 'self' 'unsafe-inline'; img-src * data:",
+		}))
 		e.Listener = https.Listener()
 		go http.ListenAndServe(":80", https.HTTPHandler(nil))
 		e.Logger.Fatal(e.Start(""))

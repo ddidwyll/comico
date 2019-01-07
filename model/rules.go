@@ -23,23 +23,23 @@ func (t *MTime) Get() {
 
 // USERACTION
 
-func (ua *UserAction) Init(ip, user string, model byte) *UserAction {
+func (ua *UserAction) Init(ip, user, action string) *UserAction {
 	ua.IP = ip
 	ua.User = user
-	ua.Model = model
+	ua.Action = action
 	return ua
 }
 
 func (ua *UserAction) key() string {
-	return fmt.Sprint(ua.User, ":", ua.Model, ":", ua.IP)
+	return fmt.Sprint(ua.User, ":", ua.Action, ":", ua.IP)
 }
 
 func (ua *UserAction) now() int64 {
 	return time.Now().Unix()
 }
 
-func (ua *UserAction) set() {
-	db.Insert(cnst.LOGS, ua.key(), fmt.Sprint(ua.now()))
+func (ua *UserAction) set(sec int64) {
+	db.Insert(cnst.LOGS, ua.key(), fmt.Sprint(ua.now()+sec))
 }
 
 func (ua *UserAction) get() int64 {
@@ -48,12 +48,14 @@ func (ua *UserAction) get() int64 {
 	return lastAction
 }
 
-func (ua *UserAction) IsWait(sec int64) bool {
-	isWait := ua.now() < (ua.get() + sec)
-	if !isWait {
-		ua.set()
+func (ua *UserAction) IsWait(sec int64) (isWait bool, wait string) {
+	delta := ua.get() - ua.now()
+	if delta > 0 {
+		sec += 2 * delta
+		isWait = true
 	}
-	return isWait
+	ua.set(sec)
+	return isWait, fmt.Sprint(sec)
 }
 
 // HELPERS

@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"log"
+	"fmt"
 )
 
 type Config struct {
@@ -152,7 +153,10 @@ var maps = [][]string{
 }
 
 const INCLOGIN = "Incorrect login or password"
-const WAIT = "Too many tries, wait ~ 5 sec"
+
+func Wait(sec string) string {
+  return fmt.Sprintf("Too many tries, wait ~ %s sec", sec)
+}
 
 func Message(status, model byte) string {
 	return maps[status][model]
