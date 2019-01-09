@@ -1,6 +1,6 @@
 <div><table>
   <thead><tr><th colspan="3"><figure>
-    {#each new Array('goods', 'posts', 'users') as key}
+    {#each (['goods', 'posts', 'users']) as key}
       <button
         on:click="$set({_activityType:key})"
         class:active="type===key"
@@ -41,12 +41,12 @@ export default {
   computed: {
     type: ({ $_activityType }) => $_activityType || 'goods',
     activities: ({ type, $comments }) =>
-      Object.entries($comments.activity[type]).sort((a, b) => 
-        +b[1][b[1].length-1].id - +a[1][a[1].length-1].id)
+      Object.entries($comments.activity[type]).slice(0, 60)
+        .sort((a, b) => b[1][b[1].length-1].id - a[1][a[1].length-1].id)
   },
   helpers: {
     get: (type, id) => store.getOne(type, id),
-    date: (unix) => store.dateFormat(unix)
+    date: (unix) => store.formatDate(unix)
   },
   oncreate() {
     const { isSigned, headers } = this.store.get()

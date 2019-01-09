@@ -1,20 +1,31 @@
 <figure hidden="{!$maxPages}">
   <button
     on:click="$gotoCmntsPage(($hashPage-1)||null)"
-    disabled="{!+$hashPage}"
+    disabled="{!$hashPage}"
     title="Prev"
-  >⬅</button>
+    aria-label="Prev comment page"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+      <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+    </svg>
+  </button>
   {#each (new Array($maxPages+1)) as _, index}
     <button
       on:click="$gotoCmntsPage(index||null)"
-      class:active="+$hashPage===index||(!index&&!$hashPage)"
+      class:active="$hashPage===index||(!index&&!$hashPage)"
+      aria-label="Comment page #{index}"
     >{index}</button>
   {/each}
   <button
-    on:click="$gotoCmntsPage(+$hashPage+1||1)"
-    disabled="{+$hashPage===$maxPages||!$maxPages}"
+    on:click="$gotoCmntsPage($hashPage+1)"
+    disabled="{$hashPage===$maxPages||!$maxPages}"
     title="Next"
-  >➡</button>
+    aria-label="Next comment page"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+      <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+    </svg>
+  </button>
 </figure>
 <script>
 export default { immutable: true }

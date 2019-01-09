@@ -5,7 +5,7 @@
       <a href="#users?id={cmnt.auth}"
         class:disabled="!$users[cmnt.auth]"
         title="{$users[cmnt.auth]||'deleted'}"
-      >@{cmnt.auth}</a>
+      >{cmnt.auth}</a>
       <strong class:disabled="cmnt.to!==$_id" hidden="{cmnt.to===cmnt.auth}">
         to {cmnt.to !== $_id ? cmnt.to : 'you'}
       </strong>
@@ -17,10 +17,11 @@
       <button
         on:click="$reply(cmnt.auth)"
         hidden="{$_id===cmnt.auth}"
-        disabled="{!$isSigned}"
+        disabled="{!$isSigned||$busy}"
       >Reply</button>
       <button
         class="red"
+        disabled="{$busy}"
         on:click="$DELETE('cmnts',[cmnt.owner,$hashType,cmnt.id].join(':'))"
         hidden="{!$isSigned||($_id!==cmnt.auth&&!$me.status)}"
       >Delete</button>
@@ -43,7 +44,7 @@ export default {
     Pager: './cmntsPager.html'
   },
   helpers: {
-    date: (unix) => store.dateFormat(unix)
+    date: (unix) => store.formatDate(unix)
   }
 }
 </script>

@@ -8,7 +8,7 @@
       <figure>
         <input
           type="text"
-          on:input="$setDeep('scribes',this.value)"
+          on:input="$setFormArr('scribes',this.value)"
           value="{$form.scribes?$form.scribes.join(', '):''}"
           placeholder="Subscribes"
           aria-label="Subscribes"
@@ -16,7 +16,7 @@
         <hr>
         <input
           type="text"
-          on:input="$setDeep('ignores',this.value)"
+          on:input="$setFormArr('ignores',this.value)"
           value="{$form.ignores?$form.ignores.join(', '):''}"
           placeholder="Ignore list"
           aria-label="Ignore list"
@@ -100,11 +100,12 @@
       class="red"
       on:click="$DELETE($hashType,$curItem.id)"
       hidden="{!$curItem}"
+      disabled="{$busy}"
       value="Delete"
     >
     <input
       type="submit"
-      disabled="{!!formErrs}"
+      disabled="{!!formErrs||$busy}"
       on:click="submit()"
       value="{$message||formErrs||'Submit'}"
       class:red="!!$message"

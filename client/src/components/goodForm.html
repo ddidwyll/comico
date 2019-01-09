@@ -11,7 +11,7 @@
         placeholder="Image URLs, one per line"
         aria-label="Image URLs, one per line"
         value="{$form.images?$form.images.join('\n'):''}"
-        on:input="$setDeep('images',this.value,'\n',120)"
+        on:input="$setFormArr('images',this.value,'\n',120)"
       ></textarea>
       <img
         src="{$_images.goods[$curItem.id]||$empty}"
@@ -78,11 +78,12 @@
       class="red"
       on:click="$DELETE($hashType,$curItem.id)"
       hidden="{!$curItem}"
+      disabled="{$busy}"
       value="Delete"
     >
     <input
       type="submit"
-      disabled="{!!formErrs}"
+      disabled="{!!formErrs||$busy}"
       on:click="$PUST({form:$form,formErrs})"
       value="{$message||formErrs||'Submit'}"
       class:red="!!$message"

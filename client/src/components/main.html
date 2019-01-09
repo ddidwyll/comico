@@ -53,15 +53,16 @@ export default {
       if (e.keyCode === 88) {
         if (!this.store.get().isImage) scrollTo(0, 999999)
         else {
-          const { index, curItem } = this.store.get()
-          if (!!curItem && !!curItem.images && !!curItem.images.length) this.store.set({ index: index + 1 })
+          const { imgIndex, curItem } = this.store.get()
+          if (!!curItem && !!curItem.images && !!curItem.images.length)
+            this.store.set({ imgIndex: imgIndex + 1 })
         }
       }
       if (e.keyCode === 90) {
         if (!this.store.get().isImage) scrollTo(0, 0)
         else {
-          const { index } = this.store.get()
-          if (!!index) this.store.set({ index: index - 1 })
+          const { imgIndex } = this.store.get()
+          if (!!imgIndex) this.store.set({ imgIndex: imgIndex - 1 })
         }
       }
       if (e.keyCode === 86) {
@@ -88,6 +89,10 @@ export default {
     busy: ({ $busy }) => {
       const body = document.body.classList
       return !$busy ? body.remove('busy') : body.add('busy')
+    },
+    modal: ({ $isModal }) => {
+      const body = document.body.classList
+      return $isModal ? body.add('modal') : body.remove('modal')
     },
     dark: ({ $_isDarkTheme }) => {
       const body = document.body.classList

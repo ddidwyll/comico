@@ -25,6 +25,7 @@
         title="Back"
         aria-label="Back"
         class:disabled="!$_lastHash"
+        hidden="{commenting}"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
           <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
@@ -34,6 +35,7 @@
         class:disabled="!$curItem.prev"
         title="Prev"
         aria-label="Prev"
+        hidden="{commenting}"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
           <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
@@ -43,6 +45,7 @@
         class:disabled="!$curItem.next"
         title="Next"
         aria-label="Next"
+        hidden="{commenting}"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
           <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
@@ -50,7 +53,7 @@
       </a>
       <button
         on:click="$openModal('form')"
-        hidden="{!$isMy||$isUser}"
+        hidden="{!$isMy||$isUser||commenting}"
         title="Edit"
         aria-label="Edit"
       >
@@ -59,10 +62,12 @@
         </svg>
       </button>
       <button
-        on:click="renew()" title="Up" aria-label="Up"
-        hidden="{!$isMy||$curItem.id>$now-24*3600||$isUser}"
+        on:click="renew()" title="Up" aria-label="Up" disabled="{$busy}"
+        hidden="{!$isMy||$curItem.id>$now-24*3600||$isUser||commenting}"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M7 14l5-5 5 5z"/>
+        </svg>
       </button>
       <textarea
         placeholder="{!$online?'offline':'Your comment'}"
@@ -72,27 +77,33 @@
         bind:value="$_comment"
         maxLength="500"
         on:keydown="sendComment(event)"
+        on:focus="set({commenting:true})"
+        on:blur="set({commenting:false})"
       ></textarea>
       <button
         on:click="sendComment()"
         hidden="{!$isSigned}"
-        disabled="{!form.text}"
+        disabled="{!form.text||$busy}"
         title="Send"
         aria-label="Send"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
       </button>
     {:else}
       <button
         on:click="$prevPage()"
-        disabled="{!+$hashPage}"
+        disabled="{!$hashPage}"
         title="Prev page"
         aria-label="Prev page"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
       </button>
       <input
-        value="{$hashPage||0}/{$maxPages}"
+        value="{$hashPage}/{$maxPages}"
         aria-label="Page number"
         type="text"
         disabled
@@ -100,12 +111,12 @@
       >
       <button
         on:click="$nextPage()"
-        disabled="{+$hashPage===$maxPages||!$maxPages}"
+        disabled="{$hashPage>=$maxPages}"
         title="Next page"
         aria-label="Next page"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
-          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
         </svg>
       </button>
       <input
@@ -119,14 +130,15 @@
         on:click="$set({_isScribes:!$_isScribes})"
         hidden="{!$tagged.scribes.length||$isUser}"
         class:active="$_isScribes"
-        title="{$_isScribes ? 'Fav' : 'All'}"
-        aria-label="{$_isScribes ? 'Fav' : 'All'}"
-      >{$_isScribes ? '✪' : '✫'}</button>
+        title="{!$_isScribes?'Fav':'All'}"
+        aria-label="{!$_isScribes?'Fav':'All'}"
+      >{$_isScribes ? '✫' : '✪'}</button>
       <button
         on:click="$openModal('form')"
         hidden="{!$isSigned||$isUser}"
         title="Add"
         aria-label="Add"
+        disabled="{$busy}"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
@@ -148,6 +160,7 @@ export default {
   immutable: true,
   data() {
     return {
+      commenting: false,
       links: [
         { href: 'goods', title: 'Goods' },
         { href: 'posts', title: 'Posts' },
@@ -158,10 +171,10 @@ export default {
   methods: {
     async sendComment(e = { keyCode: 13, ctrlKey: true }) {
       if (e.keyCode !== 13 || !e.ctrlKey) return
-      this.store.take()
-      const { headers, isSigned, curItem } = this.store.get()
+      const { headers, isSigned, busy, curItem } = this.store.get()
       const { form } = this.get(), options = { headers }
-      if (!curItem || !isSigned || !form.text) return
+      if (!curItem || !isSigned || busy || !form.text) return
+      this.store.take()
       form.id = (Date.now() * 1000).toString().slice(0, 13)
       options.body = JSON.stringify(form)
       options.method = 'POST'
@@ -176,26 +189,30 @@ export default {
       this.store.message(result.message || result)
     },
     async renew() {
-      const { headers, isSigned, curItem, hashType } = this.store.get()
-      if (!curItem || !isSigned) return
+      const { headers, isSigned, busy, curItem, hashType } = this.store.get()
+      if (!curItem || !isSigned || busy) return
       this.store.take()
-      const response = await fetch(`${location.origin}/api/renew/${hashType}/${curItem.id}`, { headers }).catch(() => null)
+      const response = await fetch(`${location.origin}/api/renew/${hashType}/${curItem.id}`, { headers })
+        .catch(() => null)
       const result = !response ? 'Connection error' : await response.json()
       if (!!response && response.ok) {
         await this.store.checkUpdate(hashType)
-        setTimeout(() => this.store.checkUpdate('cmnts') && this.store.checkUpdate('files'), 1500)
+        setTimeout(() => this.store.checkUpdate('cmnts') &&
+          this.store.checkUpdate('files'), 1500)
         this.store.goto({ id: null, page: null, search: null })
       } this.store.release()
       this.store.message(result.message || result)
     }
   },
   computed: {
-    searchValue: ({ $hash }) => location.hash.split('search=').length === 2 ? decodeURI(location.hash.split('search=')[1]) : '',
+    searchValue: ({ $hash }) => location.hash.split('search=').length === 2 ?
+      decodeURI(location.hash.split('search=')[1]) : '',
     to: ({ $_comment }) => $_comment.startsWith('@') ? $_comment.search('@*,') : -1,
     form: ({ $_id, $_comment, $hashType, $hashId, to, $curItem, $isUser }) => ({
       auth: $_id, owner: $hashId, type: $hashType,
       text: !!~to ? $_comment.slice(to + 1).trim() : $_comment,
-      to: !!~to ? $_comment.slice(1, to).slice(0, 15) : $curItem ? $isUser ? $curItem.id : $curItem.auth : ''
+      to: !!~to ? $_comment.slice(1, to).slice(0, 15) :
+        $curItem ? $isUser ? $curItem.id : $curItem.auth : ''
     })
   }
 }

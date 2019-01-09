@@ -69,7 +69,7 @@
 export default {
   immutable: true,
   helpers: {
-    date: (unix) => store.dateFormat(unix)
+    date: (unix) => store.formatDate(unix)
   },
   computed: {
     isTagged: ({ $curItem, $tagged, $isSigned }) => {

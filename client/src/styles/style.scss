@@ -149,8 +149,7 @@ h1, h2, h3, input, textarea {
   border: 0px solid #ddd;
   border-radius: 2px;
   .dark & {
-    border-radius: 0;
-    box-shadow: 0 0 3px 1px #3a3a3a;
+    box-shadow: 0 0 1px 1px #3a3a3a;
   }
 }
 .border-top {
@@ -295,17 +294,6 @@ input[type=button] {
     @extend .red;
   }
 }
-
-.busy {
-  input[type=submit],
-  input[type=button],
-  button {
-    &:not(#hack) {
-      @extend .disabled;
-    }
-  }
-}
-  
 input[type=text],
 input[type=search],
 input[type=password],
@@ -375,7 +363,7 @@ header {
       @extend .row;
       @extend .middle;
       @extend .center;
-      width: 2.4rem;
+      min-width: 2.4rem;
       line-height: 2.4rem;
       height: 2.4rem;
       box-shadow: 0 0 2px;
@@ -384,7 +372,11 @@ header {
       }
     }
     textarea, input[type=search] {
-      @extend .grow;
+    @extend .grow;
+    margin: 0 1rem;
+      .phone & {
+        min-width: 100px;
+      }
     }
     input[type=text] {
       @extend .text-center;
@@ -454,7 +446,17 @@ section {
     button, a {
       @extend .bordered;
       @extend .small;
-      min-width: 2rem;
+    }
+  }
+  &.comments > figure {
+    button, a {
+      min-width: 1.5rem;
+      font-size: 0.77rem;
+      &:first-child, &:last-child {
+        @extend .row;
+        @extend .middle;
+        border: 0;
+      }
     }
   }
   &.users > figure {
@@ -710,6 +712,7 @@ aside {
     @extend .container;
     @extend .capit;
     line-height: 3rem;
+    pointer-events: none;
     .phone & {
       @extend .hidden;
     }

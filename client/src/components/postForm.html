@@ -41,11 +41,12 @@
       class="red"
       on:click="$DELETE($hashType,$curItem.id)"
       hidden="{!$curItem}"
+      disabled="{$busy}"
       value="Delete"
     >
     <input
       type="submit"
-      disabled="{!!formErrs}"
+      disabled="{!!formErrs||$busy}"
       on:click="$PUST({form:$form,formErrs})"
       value="{$message||formErrs||'Submit'}"
       class:red="!!$message"

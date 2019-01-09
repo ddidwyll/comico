@@ -3,19 +3,19 @@
 </strong>
 <img
   class="loading"
-  src="{images[$index||0]}"
+  src="{images[$imgIndex||0]}"
   alt="{$curItem.title}"
   on:click="$closeModal()"
   on:error="$repairImage(this)"
   on:load="$showImage(this)"
 >
 <figure>
-  {#each images as img, index}
+  {#each images as img, imgIndex}
     <button
-      on:click="$set({index})"
+      on:click="$set({imgIndex})"
       class="loading"
-      class:disabled="index===$index"
-      tabindex="{index+5}"
+      class:disabled="imgIndex===$imgIndex"
+      tabindex="{imgIndex+5}"
     >
       <img src="{img}"
         on:load="$showImage(this.parentNode)"
@@ -32,8 +32,8 @@ export default {
       const images = [`/img/goods_${$curItem.id}.jpg`]
       return images.concat(($curItem.images || []))
     },
-    hack: ({ $index, images }) => {
-      if (images.length <= $index) store.set({ index: 0 })
+    hack: ({ $imgIndex, images }) => {
+      if (images.length <= $imgIndex) store.set({ imgIndex: 0 })
     }
   }
 }
