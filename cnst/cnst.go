@@ -25,6 +25,8 @@ func GetConfig() Config {
 	return config
 }
 
+const EXPIRE = 45 * 24 * 60 * 60
+
 const STATIC = "./client/public/"
 
 const (

@@ -12,7 +12,7 @@ import (
 
 var expire = &buntdb.SetOptions{
 	Expires: true,
-	TTL:     time.Second * 2592000,
+	TTL:     time.Second * cnst.EXPIRE,
 }
 
 var (
@@ -80,7 +80,7 @@ func ReadOne(db byte, key string) (str string, err error) {
 
 func ReadAll(db byte, pattern string) (str string, err error) {
 	var arr []string
-	monthAgo := fmt.Sprint(time.Now().Unix() - 2592000)
+	monthAgo := fmt.Sprint(time.Now().Unix() - cnst.EXPIRE)
 	err = shooseDB(db).View(
 		func(tx *buntdb.Tx) error {
 			return tx.DescendKeys(pattern,
