@@ -139,9 +139,9 @@ export default {
     }
   },
   methods: {
-    submit() {
+    async submit() {
       const { formErrs, pass } = this.get(), { form } = this.store.get()
-      this.store.PUST({ form, formErrs })
+      await this.store.PUST({ form, formErrs })
       if (!!pass) this.store.PUST({ form: { id: form.id, pass }, formErrs }, 'pass')
     }
   },

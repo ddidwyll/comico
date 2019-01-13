@@ -35,6 +35,8 @@ export default {
     hack: ({ $imgIndex, images }) => {
       if (images.length <= $imgIndex) store.set({ imgIndex: 0 })
     }
-  }
+  },
+  oncreate() { this.store.take() },
+  ondestroy(){ this.store.release() }
 }
 </script>

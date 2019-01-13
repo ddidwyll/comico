@@ -31,6 +31,7 @@ class ComicoStore extends Store {
   }
   showImage(target) {
     target.classList.remove('loading')
+    this.release()
   }
   formatDate(unix) {
     const date = new Date(unix * 1000), mins = date.getMinutes()
@@ -179,7 +180,7 @@ proto.PUST = async function({ form = {}, formErrs }, type, state = {}) {
   const response = await fetch(api + type, { method, headers, body })
     .catch(() => null)
   const result = !response ? 'Connection error' : await response.json()
-  if (!!response && response.ok) {
+  if (!!response && response.ok && type !== 'pass') {
     await this.checkUpdate(type)
     state[`_${hashType}` + !curItem ? 'Add' : 'Edit'] = {}
     this.set(state); this.closeModal()
@@ -417,6 +418,7 @@ async function cacheImages(newFiles = []) {
   const oldFiles = JSON.parse(localStorage.getItem('_files') || '[]')
   let iN = newFiles.length - 1, iO = oldFiles.length - 1
   if (!~iN) return
+  store.take()
   const cache = caches ? await caches.open('comico') : null
   const images = { goods: {}, users: {} }
   if (!!cache && !!~iO) do {
@@ -432,6 +434,7 @@ async function cacheImages(newFiles = []) {
       await cache.add(new Request(src, { cache: 'no-cache' })); iN--
   } while (~iN)
   store.set({ _images: images })
+  store.release()
 }
 
 
