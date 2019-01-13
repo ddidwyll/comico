@@ -260,6 +260,10 @@ func (g *Good) get(id string) bool {
 }
 
 func (g *Good) validate(user string) error {
+	g.Title = strings.Trim(g.Title, " ")
+	g.Price = strings.Trim(g.Price, " ")
+	g.Type = strings.Trim(g.Type, " ")
+	g.Text = strings.Trim(g.Text, " ")
 	if wrongId(g.Id, cnst.GOOD) || length(g.Title) > 35 ||
 		length(g.Price) > 25 || length(g.Type) > 25 || length(g.Text) > 1100 {
 		return cnst.Error(cnst.WRNG, cnst.GOOD)
@@ -307,6 +311,9 @@ func (p *Post) get(id string) bool {
 }
 
 func (p *Post) validate(user string) error {
+	p.Title = strings.Trim(p.Title, " ")
+	p.Type = strings.Trim(p.Type, " ")
+	p.Text = strings.Trim(p.Text, " ")
 	if wrongId(p.Id, cnst.POST) || length(p.Title) > 35 ||
 		length(p.Type) > 25 || length(p.Text) > 1100 {
 		return cnst.Error(cnst.WRNG, cnst.POST)
@@ -341,6 +348,7 @@ func (c *Comment) get(id string) bool {
 }
 
 func (c *Comment) validate(user string) error {
+	c.Text = strings.Trim(c.Text, " ")
 	t := cnst.CommentTypeReverse(c.Type)
 	if (wrongId(c.Id, cnst.CMNT) && !db.Exist(cnst.CMNT, c.id())) ||
 		t == cnst.ERRR || !db.Exist(t, c.Owner) ||

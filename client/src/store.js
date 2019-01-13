@@ -101,6 +101,7 @@ class ComicoStore extends Store {
   }
   setForm(value, prop, state = {}) {
     const { curItem, hashType, form } = this.get()
+    value = value.trim()
     form[prop] = value; state.form = Object.assign({}, form)
     state[`_${hashType}` + !curItem ? 'Add' : 'Edit'] = form
     this.set(state)
