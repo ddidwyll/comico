@@ -1,7 +1,7 @@
 package db
 
 import (
-	"comico/cnst"
+	"github.com/ddidwyll/comico/cnst"
 	"github.com/tidwall/buntdb"
 
 	"fmt"

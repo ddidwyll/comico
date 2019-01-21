@@ -1,8 +1,8 @@
 package server
 
 import (
-	"comico/cnst"
-	"comico/model"
+	"github.com/ddidwyll/comico/cnst"
+	"github.com/ddidwyll/comico/model"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"

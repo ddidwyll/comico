@@ -1,8 +1,9 @@
 package model
 
 import (
-	"comico/cnst"
-	"comico/db"
+	"github.com/ddidwyll/comico/cnst"
+	"github.com/ddidwyll/comico/db"
+
 	"fmt"
 	"io"
 	"mime/multipart"

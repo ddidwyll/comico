@@ -1,9 +1,9 @@
 package main
 
 import (
-	"comico/db"
-	"comico/server"
-	"comico/model"
+	"github.com/ddidwyll/comico/db"
+	"github.com/ddidwyll/comico/server"
+	"github.com/ddidwyll/comico/model"
 )
 
 func main() {

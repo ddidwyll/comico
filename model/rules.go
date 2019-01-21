@@ -1,11 +1,12 @@
 package model
 
 import (
-	"comico/cnst"
-	"comico/db"
+	"github.com/ddidwyll/comico/cnst"
+	"github.com/ddidwyll/comico/db"
+	"golang.org/x/crypto/bcrypt"
+
 	"encoding/json"
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"strings"
 	"time"
