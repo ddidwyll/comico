@@ -103,25 +103,25 @@ func (u *User) get(id string) bool {
 }
 
 func (u *User) validate(user string) error {
-	if wrongNick(u.Id) || length(u.Title) > 25 || length(u.Type) > 25 {
+	if wrongNick(u.Id) || length(u.Title) > 35 || length(u.Type) > 35 {
 		return cnst.Error(cnst.WRNG, cnst.USER)
 	}
 	i := 0
 	for key, val := range u.Table {
-		if length(key) > 25 || length(val) > 120 || val == "" || i > 9 {
+		if length(key) > 35 || length(val) > 120 || val == "" || i > 9 {
 			return cnst.Error(cnst.WRNG, cnst.USER)
 		}
 		i++
 	}
 	for i, val := range u.Scribes {
 		u.Scribes[i] = strings.ToLower(val)
-		if length(val) > 25 {
+		if length(val) > 35 {
 			return cnst.Error(cnst.WRNG, cnst.USER)
 		}
 	}
 	for i, val := range u.Ignores {
 		u.Ignores[i] = strings.ToLower(val)
-		if length(val) > 25 {
+		if length(val) > 35 {
 			return cnst.Error(cnst.WRNG, cnst.USER)
 		}
 	}
@@ -266,12 +266,12 @@ func (g *Good) validate(user string) error {
 	g.Type = strings.Trim(g.Type, " ")
 	g.Text = strings.Trim(g.Text, " ")
 	if wrongId(g.Id, cnst.GOOD) || length(g.Title) > 35 ||
-		length(g.Price) > 25 || length(g.Type) > 25 || length(g.Text) > 1100 {
+		length(g.Price) > 35 || length(g.Type) > 35 || length(g.Text) > 3100 {
 		return cnst.Error(cnst.WRNG, cnst.GOOD)
 	}
 	i := 0
 	for key, val := range g.Table {
-		if length(key) > 25 || length(val) > 120 || val == "" || i > 9 {
+		if length(key) > 35 || length(val) > 120 || val == "" || i > 9 {
 			return cnst.Error(cnst.WRNG, cnst.GOOD)
 		}
 		i++
@@ -316,7 +316,7 @@ func (p *Post) validate(user string) error {
 	p.Type = strings.Trim(p.Type, " ")
 	p.Text = strings.Trim(p.Text, " ")
 	if wrongId(p.Id, cnst.POST) || length(p.Title) > 35 ||
-		length(p.Type) > 25 || length(p.Text) > 1100 {
+		length(p.Type) > 35 || length(p.Text) > 3100 {
 		return cnst.Error(cnst.WRNG, cnst.POST)
 	}
 	if p.Title == "" || p.Type == "" || p.Text == "" {
@@ -353,7 +353,7 @@ func (c *Comment) validate(user string) error {
 	t := cnst.CommentTypeReverse(c.Type)
 	if (wrongId(c.Id, cnst.CMNT) && !db.Exist(cnst.CMNT, c.id())) ||
 		t == cnst.ERRR || !db.Exist(t, c.Owner) ||
-		length(c.To) > 15 || length(c.Text) > 600 {
+		length(c.To) > 15 || length(c.Text) > 1600 {
 		return cnst.Error(cnst.WRNG, cnst.CMNT)
 	}
 	if c.Text == "" {

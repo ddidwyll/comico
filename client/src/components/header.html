@@ -75,7 +75,7 @@
         rows="1"
         disabled="{!$isSigned}"
         bind:value="$_comment"
-        maxLength="500"
+        maxLength="1500"
         on:keydown="sendComment(event)"
         on:focus="set({commenting:true})"
         on:blur="set({commenting:false})"
