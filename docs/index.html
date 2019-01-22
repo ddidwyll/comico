@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ComiCo project</title>
+    <meta name="description" content="Opensource client and server for simple forum / ad board. It is designed for easy communication.">
+    <link rel="stylesheet" href="sakura.css" type="text/css">
+  </head>
+  <body>
+    <header id="top">
+      <h1>ComiCo project</h1>
+      <hr>
+      <nav>
+        <a href="#pros">Features</a> |
+        <a href="#cons">Known bugs</a> |
+        <a href="#todo">Roadmap</a> |
+        <a href="#imgs">Screenshots</a> |
+        <a href="#setup">Install</a> |
+        <a href="#help">Help</a> |
+        <a href="#links">Links</a>
+      </nav>
+      <hr>
+    </header>
+    <main>
+      <section>
+        <h2>About</h2>
+        <blockquote>
+          okay doing - will be fine
+        </blockquote>
+        <blockquote>
+          let's make web great again
+        </blockquote>
+        <p>
+          ComiCo - opensource client and server for simple forum / ad board.
+          It is designed for easy communication.
+          The main features are fast work with a poor Internet connection (and without),
+          simple and user-friendly interface, compliance with modern standards.
+          It also tries to solve the "fat web" problem by limiting external dependencies
+          and throwing out "unnecessary" functionality.
+        </p>
+        <p>
+          The plans to change the architecture from client-server to the federated
+          for <span>great justice</span> more freedom of information and counter-censorship.
+        </p>
+        <p>
+          At the moment, the project is in the prototype stage,
+          which implements only the basic functionality.
+          You can help by sending an error report or your opinion on how this application can be.
+        </p>
+      </section>
+      <hr>
+      <section id="pros">
+        <h2>Features</h2>
+        <h3>Server</h3>
+        <ul>
+          <li>Simple json rest api, writen in golang</li>
+          <li>Fast embedded, in-memory storage</li>
+          <li>ACME autocert</li>
+          <li>JWT for authentication</li>
+          <li>All needed headers for security (CORS, CSP, HSTS, etc)</li>
+          <li>Simple anti-bruteforce</li>
+          <li>Static file server (no nginx, apache, etc needed)</li>
+          <li>Images optimization</li>
+          <li>Flexible data validation and access rights</li>
+          <li>Indicates when the data type is last modified</li>
+          <li>5 minutes installation</li>
+        </ul>
+        <pre>
+  ➜  cat /proc/cpuinfo | grep name
+  model username: Intel(R) Core(TM) i3-2350M CPU @ 2.30GHz</pre>
+        <pre>
+  ➜  wrk -t2 -c500 -d60s http://localhost:9001/pub/mtimes
+  Running 1m test @ http://localhost:9001/pub/mtimes
+    2 threads and 500 connections
+    Thread Stats   Avg      Stdev     Max   +/- Stdev
+      Latency    20.74ms   16.68ms 236.16ms   72.69%
+      Req/Sec    13.19k   627.43    15.62k    73.58%
+    1575522 requests in 1.00m, 449.26MB read
+  Requests/sec:  26231.85
+  Transfer/sec:  7.48MB</pre>
+        <pre>
+  ➜  wrk -t2 -c500 -d60s http://localhost:9001/pub/goods 
+  Running 1m test @ http://localhost:9001/pub/goods
+    2 threads and 500 connections
+    Thread Stats   Avg      Stdev     Max   +/- Stdev
+      Latency    61.79ms   65.96ms 643.73ms   86.48%
+      Req/Sec     5.26k   705.24     7.88k    70.31%
+    628215 requests in 1.00m, 8.44GB read
+  Requests/sec:  10454.44
+  Transfer/sec:  143.89MB</pre>
+        <h3>Client</h3>
+        <ul>
+          <li>No external dependencies, 30 KB gzip js/css/html</li>
+          <li>Caches all data in localStorage, works offline</li>
+          <li>Images and assets in cacheStorage</li>
+          <li>Reloading the page does not affect</li>
+          <li>Clean and simple HTML and JS, maximum reuse</li>
+          <li>Mobile-friendly, PageSpeed 100/100</li>
+          <li>Accessibility ready</li>
+        </ul>
+        <ul>
+          <li>Very simple user interface</li>
+          <li>Commenting everything</li>
+          <li>Subscribe and ignore by record type or username</li>
+          <li>Image upload or use external</li>
+          <li>Up your post once a day, it will expire in a month</li>
+          <li>Custom key-value data table for goods and users</li>
+          <li>Flexible search and filters</li>
+          <li>Notification of new comments to your</li>
+          <li>Intuitive page URL and title</li>
+          <li>Full-featured keyboard navigation</li>
+        </ul>
+        <blockquote>
+          <a href="#top"><small>top</small></a>
+        </blockquote>
+      </section>
+      <hr>
+      <section id="cons">
+        <h2>Known bugs</h2>
+        <pre>
+  Not all features are fully implemented :)
+  For older browsers, there are no js-polyfills and css prefixes.
+  Not a beautiful code style.
+  Not perfect design and user interface.
+  For large data and / or frequent changes, client may consume a large amount of resources.</pre>
+        <blockquote>
+          <a href="#top"><small>top</small></a>
+        </blockquote>
+      </section>
+      <hr>
+      <section id="todo">
+        <h2>Roadmap</h2>
+        <h3>ComiCo project</h3>
+        <p>
+          More parameters for data request:
+          time range, selection by user, specific id.
+          Log transaction (creating, editing, deleting articles) and
+          push notification of the client about it via server sent event.
+          The client stores data on the indexedDB and loads only
+          the changed items from the server.
+        </p>
+        <h3>Bazaar project</h3>
+        <p>
+          Federated network. Servers can merge, displaying data from "friendly".
+          Each federation has its own client, with its own design.
+          Moderation and user management for each server is different.
+        </p>
+        <h3>Echo project</h3>
+        <p>
+          Decentralized network. Each client is also a server.
+          The data exchange protocol contains information about access rights,
+          data structure, source code for processing and display.
+          Instances can subscribe (keep a copy and wait for change notifications),
+          read, suggest changes for data types of other instances (if this is allowed for this type).
+        </p>
+        <h3>...</h3>
+        <h3>Profit!</h3>
+        <blockquote>
+          <a href="#top"><small>top</small></a>
+        </blockquote>
+      </section>
+      <hr>
+      <section id="imgs">
+        <h2>Screenshots</h2>
+          <a target="_blanc"
+            href="https://raw.githubusercontent.com/ddidwyll/comico/master/other/2019-01-07-205954_1366x768_scrot.png">
+            <img alt="ComiCo"
+              src="https://raw.githubusercontent.com/ddidwyll/comico/master/other/2019-01-07-205954_1366x768_scrot.png">
+          </a>
+          <a target="_blanc"
+            href="https://raw.githubusercontent.com/ddidwyll/comico/master/other/2019-01-07-210112_1366x768_scrot.png">
+            <img alt="ComiCo"
+              src="https://raw.githubusercontent.com/ddidwyll/comico/master/other/2019-01-07-210112_1366x768_scrot.png">
+          </a>
+          <a target="_blanc"
+            href="https://raw.githubusercontent.com/ddidwyll/comico/master/other/2019-01-07-210152_1366x768_scrot.png">
+            <img alt="ComiCo"
+              src="https://raw.githubusercontent.com/ddidwyll/comico/master/other/2019-01-07-210152_1366x768_scrot.png">
+          </a>
+          <a target="_blanc"
+            href="https://raw.githubusercontent.com/ddidwyll/comico/master/other/2019-01-07-210306_1366x768_scrot.png">
+            <img alt="ComiCo"
+              src="https://raw.githubusercontent.com/ddidwyll/comico/master/other/2019-01-07-210306_1366x768_scrot.png">
+          </a>
+        <blockquote>
+          <a href="#top"><small>top</small></a>
+        </blockquote>
+      </section>
+      <hr>
+      <section id="setup">
+        <h2>Install</h2>
+        <pre>
+  # yum install golang nodejs ImageMagick
+  # useradd -d /var/www/comico -U comico
+  # passwd comico
+  # su -l comico
+  $ mkdir ~/go/src
+  $ cd ~/go/src
+  $ git clone https://github.com/ddidwyll/comico.git
+  $ cd comico
+  $ cp other/config.json.example ./config.json
+  $ vi ./config.json
+  $ go get
+  $ go build
+  $ cd client
+  $ npm i
+  $ npm run build
+  $ exit
+  # cp /var/www/comico/go/src/comico/other/comico.service /etc/systemd/system/
+  # systemctl daemon-reload
+  # systemctl start comico</pre>
+        <p>
+          If port in config.json == "80" || "443" comico use ACME cert<br>
+          If no config.json presents check http://localhost:8080<br>
+          For Ubuntu, Debian, Elementary, Mint use apt. Etc<br>
+          After install login admin|admin and enjoy :)<br>
+        </p>
+        <blockquote>
+          <a href="#top"><small>top</small></a>
+        </blockquote>
+      </section>
+      <hr>
+      <section id="help">
+        <h2>Help</h2>
+        <p>Today I need review and feedback.</p>
+        <blockquote>
+          <a href="#top"><small>top</small></a>
+        </blockquote>
+      </section>
+      <hr>
+      <section id="links">
+        <h2>Links</h2>
+        <table>
+          <tr>
+            <td>Svelte</td>
+            <td>
+              <a href="https://github.com/sveltejs/svelte">
+                github.com/sveltejs/svelte
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>Echo</td>
+            <td>
+              <a href="https://github.com/labstack/echo">
+                github.com/labstack/echo
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>BuntDB</td>
+            <td>
+              <a href="https://github.com/tidwall/buntdb">
+                github.com/tidwall/buntdb
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>Source</td>
+            <td>
+              <a href="https://github.com/ddidwyll/comico">
+                github.com/ddidwyll/comico
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>Habr (ru)</td>
+            <td>
+              <a href="https://habr.com/ru/post/435908/">
+                habr.com/ru/post/435908
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>Author</td>
+            <td>
+              <a href="mailto:ddidwyll@gmail.com">
+                ddidwyll@gmail.com
+              </a>
+            </td>
+          </tr>
+        </table>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,101 @@
+/* Body */
+html {
+  font-size: 50%;
+  font-family: Ubuntu, Verdana, Geneva, sans-serif; }
+
+body {
+  font-size: 1.8rem;
+  line-height: 1.618;
+  max-width: 48em;
+  margin: 15px auto;
+  color: #e2e1d9;
+  background: scroll #454545 url("https://github.com/ddidwyll/comico/raw/master/client/public/img/noise.png");
+  box-shadow: 0 0 4px 1px #33333338;
+  padding: 15px 30px; }
+
+@media (max-width: 684px) {
+  body {
+    font-size: 1.53rem; } }
+
+@media (max-width: 382px) {
+  body {
+    font-size: 1.35rem; } }
+
+h1, h2, h3 {
+  line-height: 1.1;
+  font-weight: 500;
+  hyphens: auto; }
+
+h1 {
+  font-size: 1.5em; }
+
+h2 {
+  font-size: 1.25em; }
+
+h3 {
+  font-size: 1em; }
+
+small, sub, sup {
+  font-size: 75%; }
+
+span {
+  text-decoration: line-through; }
+
+hr {
+  border: 0;
+  height: 0;
+  border-bottom: 2px solid rgba(205, 91, 85, .5); }
+
+a {
+  text-decoration: none;
+  color: indianred; }
+  a:hover {
+    color: #e2e1d9;
+    border-bottom: 2px solid indianred; }
+
+ul {
+  padding-left: 1.4em; }
+
+li {
+  margin-bottom: 0.4em; }
+
+blockquote {
+  font-style: italic;
+  margin: 5px 0 0 70%;
+  padding: 0;
+  text-align: right; }
+
+nav, h1, h2, #imgs {
+  text-align: center; }
+
+img {
+  max-width: 45%; }
+
+/* Pre and Code */
+pre {
+  background-color: rgba(0,0,0,.1);
+  display: block;
+  padding: 1em;
+  overflow-x: auto; }
+
+code {
+  font-size: 0.9em;
+  padding: 0 0.5em;
+  background-color: rgba(0,0,0,.1);
+  white-space: pre-wrap; }
+
+pre > code {
+  padding: 0;
+  background-color: transparent;
+  white-space: pre; }
+
+/* Tables */
+table {
+  text-align: justify;
+  width: 100%;
+  border-collapse: collapse; }
+
+td, th {
+  padding: 0.5em; }
+
+
