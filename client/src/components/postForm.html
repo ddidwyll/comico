@@ -1,60 +1,70 @@
 <form
-  action="/api/posts"
   method="{$method}"
+  action="/api/posts"
   onsubmit="return false"
+  class:container="!!textarea"
 >
   <input value="{$form.id}" name="id" hidden>
   <input value="{$form.auth}" name="auth" hidden>
   <input
-    type="text"
     on:input="$setForm(this.value,'title')"
+    hidden="{!!textarea}"
     value="{$form.title}"
     placeholder="Title"
     aria-label="Title"
     maxLength="35"
     name="title"
-  >
-  <hr>
-  <input
     type="text"
+  >
+  <hr hidden="{!!textarea}">
+  <input
     on:input="$setForm(this.value,'type')"
+    hidden="{!!textarea}"
     value="{$form.type}"
     placeholder="Type"
     aria-label="Type"
     maxLength="35"
     name="type"
+    type="text"
   >
-  <hr>
+  <hr hidden="{!!textarea}">
+  <button
+    hidden="{!textarea}"
+    aria-label="Close"
+    title="Close"
+  >Close</button>
   <textarea
+    on:input="$setForm(this.value,'text')"
+    on:focus="set({textarea:true})"
+    on:blur="set({textarea:false})"
+    value="{$form.text}"
     placeholder="Text"
     aria-label="Text"
-    on:input="$setForm(this.value,'text')"
-    value="{$form.text}"
     maxLength="3000"
     name="text"
     rows="4"
   ></textarea>
   <hr>
-  <div>
+  <div hidden="{!!textarea}">
     <input
-      type="button"
-      class="red"
       on:click="$DELETE($hashType,$curItem.id)"
       hidden="{!$curItem}"
       disabled="{$busy}"
       value="Delete"
+      type="button"
+      class="red"
     >
     <input
-      type="submit"
-      disabled="{!!formErrs||$busy}"
       on:click="$PUST({form:$form,formErrs})"
       value="{$message||formErrs||'Submit'}"
+      disabled="{!!formErrs||$busy}"
       class:red="!!$message"
+      type="submit"
     >
     <input
-      type="button"
       on:click="$closeModal()"
       value="Cancel"
+      type="button"
     >
   </div>
 </form>

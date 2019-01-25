@@ -64,7 +64,10 @@ class ComicoStore extends Store {
   }
   nextItem() {
     const { curItem, isForm } = this.get()
-    if (!!curItem && !!curItem.next) this.goto({ id: curItem.next })
+    if (!!curItem && !!curItem.next) {
+      this.goto({ id: curItem.next })
+      if (isForm) this.closeModal()
+    }
     if (!curItem) {
       const focus = document.querySelector('article:focus')
       const first = document.querySelector('article:first-child')
@@ -74,7 +77,10 @@ class ComicoStore extends Store {
   }
   prevItem() {
     const { curItem, isForm } = this.get()
-    if (!!curItem && !!curItem.prev) this.goto({ id: curItem.prev })
+    if (!!curItem && !!curItem.prev) {
+      this.goto({ id: curItem.prev })
+      if (isForm) this.closeModal()
+    }
     if (!curItem) {
       const focus = document.querySelector('article:focus')
       const last = document.querySelector('article:last-child')
@@ -103,7 +109,7 @@ class ComicoStore extends Store {
     const { curItem, hashType, form } = this.get()
     value = typeof value === 'string' ? value.trim() : value
     form[prop] = value; state.form = Object.assign({}, form)
-    state[`_${hashType}` + !curItem ? 'Add' : 'Edit'] = form
+    state[`_${hashType}` + (!curItem ? 'Add' : 'Edit')] = form
     this.set(state)
   }
   setFormArr(prop, value, delim = ',', length = 25) {
@@ -118,15 +124,11 @@ class ComicoStore extends Store {
 const store = new ComicoStore({
   now: now(), online: true, busy: true, hash: {}, _goods: [], _posts: [], form: {},
   _users: [], _cmnts: [], _files: [],  _mtimes: {}, _comment: '', other: [],
-  imgIndex: 0, _images: { goods: {}, users: {} }, empty: `data:image/png;base64,
-  iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAB
-  dElEQVR4nO3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+Bn+3AAEkkD9cAAAAAElFTkSuQmCC`
+  imgIndex: 0, _images: { goods: {}, users: {} }, empty: `data:image/svg+xml;utf8,
+  <svg version="1.1" viewBox="0 0 50 50" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+  <path d="M1,43h48V7H1V43z M3,41v-7.586l11-11l10,10l17-17l6,6V41H3z M47,9v9.586l-6-6l-17,17l-10-10l-11,11V9H47z"/>
+  <path d="m24 22c2.757 0 5-2.243 5-5s-2.243-5-5-5-5 2.243-5 5 2.243 5 5 5zm0-8c1.654 0 3 1.346 3 3s-1.346 3-3 3-3-1.346-3-3 1.346-3 3-3z"/>
+  </svg>`
 })
 
 
@@ -183,7 +185,7 @@ proto.PUST = async function({ form = {}, formErrs }, type, state = {}) {
   const result = !response ? 'Connection error' : await response.json()
   if (!!response && response.ok && type !== 'pass') {
     await this.checkUpdate(type)
-    state[`_${hashType}` + !curItem ? 'Add' : 'Edit'] = {}
+    state[`_${hashType}` + (!curItem ? 'Add' : 'Edit')] = {}
     this.set(state); this.closeModal()
     this.goto({ type: type, id: form.id, search: null, page: null })
   } this.message(result.message || result); this.release()
@@ -241,7 +243,6 @@ function parseHash(e = { oldURL: '#id=' }, result = {}) {
     store.get()._lastHash : e.oldURL.split('#')[1]
   store.set({ hash: result, _lastHash: lastHash || '' })
   if (!result.id || !~e.oldURL.indexOf('id=')) scrollTo(0, 0)
-  if (store.get().isForm) store.closeModal()
 } window.addEventListener('hashchange', parseHash)
 /** current location computed statuses **/
 store.compute('curHash', ['hash'], () => location.hash || '#goods')

@@ -20,7 +20,7 @@
     >@{post.auth}</a>
     <hr>
     {#if $isAlone}
-      {#each post.text.split('\n') as t}<p>{t}</p>{/each}
+      <Text />
     {/if}
     <a href="#posts?id={post.id}" hidden>{post.title}</a>
   </article>
@@ -28,6 +28,9 @@
 <script>
 export default {
   immutable: true,
+  components: {
+    Text: './textFormat.html'
+  },
   helpers: {
     date: (unix) => store.formatDate(unix)
   },

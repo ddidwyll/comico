@@ -23,7 +23,7 @@
     <hr>
     {#if $isAlone}
       <figure>
-        {#each good.text.split('\n') as t}<p>{t}</p>{/each}
+        <Text />
         {#if !!good.Table && !!Object.keys(good.Table).length}
           <table>
             {#each Object.entries(good.Table) as [type, value]}
@@ -46,5 +46,10 @@
 {/each}
 
 <script>
-export default { immutable: true }
+export default {
+  components: {
+    Text: './textFormat.html'
+  },
+  immutable: true
+}
 </script>

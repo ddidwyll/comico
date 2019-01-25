@@ -1,0 +1,21 @@
+{#if !!$curItem && !!$curItem.text}
+  {#each $curItem.text.split('\n').filter(str => !!str) as section}
+    {#if !section.trim().indexOf('##')}
+      <h4>{section.replace('##','').trim()}</h4>
+    {:elseif !section.trim().indexOf('#')}
+      <h3>{section.replace('#','').trim()}</h3>
+    {:elseif !section.trim().indexOf('*')}
+      <dt>{section.replace('*','').trim()}</dt>
+    {:elseif !section.trim().indexOf('>')}
+      <blockquote>{section.replace('>','').trim()}</blockquote>
+    {:elseif !section.trim().indexOf('~')}
+      <pre>{section.replace('~','').trim()}</pre>
+    {:elseif !section.trim().indexOf('`')}
+      <code>{section.replace('`','').trim()}</code>
+    {:elseif section.trim() !== '_'}
+      <p>{section.trim()}</p>
+    {:else}
+      <hr>
+    {/if}
+  {/each}
+{/if}
