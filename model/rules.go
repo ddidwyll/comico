@@ -108,7 +108,7 @@ func (u *User) validate(user string) error {
 	}
 	i := 0
 	for key, val := range u.Table {
-		if length(key) > 35 || length(val) > 120 || val == "" || i > 9 {
+		if length(key) > 35 || length(val) > 250 || val == "" || i > 19 {
 			return cnst.Error(cnst.WRNG, cnst.USER)
 		}
 		i++
@@ -266,18 +266,18 @@ func (g *Good) validate(user string) error {
 	g.Type = strings.Trim(g.Type, " ")
 	g.Text = strings.Trim(g.Text, " ")
 	if wrongId(g.Id, cnst.GOOD) || length(g.Title) > 35 ||
-		length(g.Price) > 35 || length(g.Type) > 35 || length(g.Text) > 3100 {
+		length(g.Price) > 35 || length(g.Type) > 35 || length(g.Text) > 5000 {
 		return cnst.Error(cnst.WRNG, cnst.GOOD)
 	}
 	i := 0
 	for key, val := range g.Table {
-		if length(key) > 35 || length(val) > 120 || val == "" || i > 9 {
+		if length(key) > 35 || length(val) > 250 || val == "" || i > 9 {
 			return cnst.Error(cnst.WRNG, cnst.GOOD)
 		}
 		i++
 	}
 	for i, val := range g.Images {
-		if length(val) > 100 || i > 9 {
+		if length(val) > 250 || i > 9 {
 			return cnst.Error(cnst.WRNG, cnst.GOOD)
 		}
 	}
@@ -316,7 +316,7 @@ func (p *Post) validate(user string) error {
 	p.Type = strings.Trim(p.Type, " ")
 	p.Text = strings.Trim(p.Text, " ")
 	if wrongId(p.Id, cnst.POST) || length(p.Title) > 35 ||
-		length(p.Type) > 35 || length(p.Text) > 3100 {
+		length(p.Type) > 35 || length(p.Text) > 5000 {
 		return cnst.Error(cnst.WRNG, cnst.POST)
 	}
 	if p.Title == "" || p.Type == "" || p.Text == "" {

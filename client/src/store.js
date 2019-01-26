@@ -107,15 +107,14 @@ class ComicoStore extends Store {
   }
   setForm(value, prop, state = {}) {
     const { curItem, hashType, form } = this.get()
-    value = typeof value === 'string' ? value.trim() : value
     form[prop] = value; state.form = Object.assign({}, form)
     state[`_${hashType}` + (!curItem ? 'Add' : 'Edit')] = form
     this.set(state)
   }
-  setFormArr(prop, value, delim = ',', length = 25) {
+  setFormArr(prop, value, delim = ',', length = 35) {
     value = (value || '').trim()
     value = value.endsWith(delim) ? value.slice(0, -1) : value
-    const result = value.split(delim).slice(0, 10)
+    const result = value.split(delim).slice(0, 19)
       .filter(t => !!t).map(item => item.trim().slice(0, length))
     this.setForm(result, prop)
   }

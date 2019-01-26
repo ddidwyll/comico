@@ -9,7 +9,7 @@
   {#if !!$curItem && !textarea}
     <div>
       <textarea
-        on:input="$setFormArr('images',this.value,'\n',120)"
+        on:input="$setFormArr('images',this.value,'\n',250)"
         value="{$form.images?$form.images.join('\n'):''}"
         placeholder="Image URLs, one per line"
         aria-label="Image URLs, one per line"
@@ -73,7 +73,7 @@
     placeholder="Description"
     aria-label="Description"
     value="{$form.text}"
-    maxLength="3000"
+    maxLength="5000"
     name="text"
     rows="4"
   ></textarea>
